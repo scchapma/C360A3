@@ -84,7 +84,7 @@ int getFreeSpace(FILE* fp, int size)
 		}
 
 	}
-	printf("Counter: %d\n", counter);
+	//printf("Counter: %d\n", counter);
 	free_space = counter * BYTES_PER_SECTOR;
 	printf("Free size of the disk: %d bytes.\n", free_space);
 
@@ -123,7 +123,7 @@ void getNumberFiles(FILE *fp, int* number_files)
 			/* Locate the byte for the current entry's attribute */
 			fseek(fp, cur + attribute_offset, SEEK_SET);
 			fread(&tmp2,1,1,fp);
-			printf("Attribute: %d\n", tmp2);
+			//printf("Attribute: %d\n", tmp2);
 			
 			/* What is the attribute of the entry ? */
 			/* if not 0x0F(not part of a long file name), not suddirectory, not volume label, then it is a file. */
@@ -142,7 +142,7 @@ void getNumberFiles(FILE *fp, int* number_files)
 		fread(&tmp,1,1,fp);
 	}
 	//*number_files = counter;
-	printf("Number of files: %d\n", *number_files);
+	//printf("Number of files: %d\n", *number_files);
 }
 
 void getNumberFATCopies(FILE *fp, int* number_FAT_copies)
@@ -177,7 +177,7 @@ int main()
 	
 	if ((fp=fopen("disk2.IMA","r")))
 	{
-		printf("Successfully open the image file.\n");
+		//printf("Successfully open the image file.\n");
 		
 		getOSName(fp,osname);
 		printf("OS Name: %s\n", osname);
@@ -186,19 +186,24 @@ int main()
 		printf("Label of the disk: %s\n", label);
 
 		size = getSize(fp);	
-		printf("Total Sectors: %d\n", size);
+		//printf("Total Sectors: %d\n", size);
 		printf("Total Size of the disk: %d bytes.\n", size*512);
+		getFreeSpace(fp, size);
+
+		printf("\n========================\n");	
 
 		getNumberFiles(fp, number_files);
 		printf("The number of files in the root directory (not including subdirectories): %d\n", *number_files);
 		
+		printf("\n========================\n");	
+
 		getNumberFATCopies(fp, number_FAT_copies);
 		printf("Number of FAT copies: %d\n", *number_FAT_copies);
 
 		getSectorsPerFAT(fp, sectors_per_FAT);
 		printf("Sectors per FAT: %d\n", *sectors_per_FAT);
 
-		getFreeSpace(fp, size);		
+			
 
 	}
 
