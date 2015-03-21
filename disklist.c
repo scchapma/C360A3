@@ -59,7 +59,20 @@ void testAttributes(FILE *fp, int cur, int *fileFlag, int *directoryFlag, char *
 		*fileFlag = 1;
 		printf("File found.\n");
 	}
+}
 
+void getFileSize(FILE *fp, int cur, long *fileSize)
+{
+	int file_size_offset = 28;
+	int tmp1, tmp2, tmp3, tmp4;
+
+	fseek(fp, cur + file_size_offset, SEEK_SET);
+	fread(&tmp1,1,1,fp);
+	fread(&tmp2,1,1,fp);
+	fread(&tmp3,1,1,fp);
+	fread(&tmp4,1,1,fp);
+
+	*fileSize = tmp1 + (tmp2 << 8) + (tmp3 << 16) + (tmp4 << 24);
 }
 
 
@@ -67,7 +80,7 @@ void testAttributes(FILE *fp, int cur, int *fileFlag, int *directoryFlag, char *
 // loop through the root directory
 // Each entry has 32 bytes in root directory
 //void getNumberFiles(FILE *fp, int* number_files)
-void parseDirectory(FILE *fp, int *fileFlag, int *directoryFlag, int *fileSize, char *fileName, int *fileDate, int *fileTime)
+void parseDirectory(FILE *fp, int *fileFlag, int *directoryFlag, long *fileSize, char *fileName, int *fileDate, int *fileTime)
 {
 	int base = 9728;  // the first byte of the root directory
 
@@ -95,7 +108,8 @@ void parseDirectory(FILE *fp, int *fileFlag, int *directoryFlag, int *fileSize, 
 			testAttributes(fp, cur, fileFlag, directoryFlag, fileName);
 
 			//get file size	
-
+			getFileSize(fp, cur, fileSize);
+			printf("FileSize: %ld bytes.\n", *fileSize);
 
 			//get file creation date
 
@@ -104,6 +118,8 @@ void parseDirectory(FILE *fp, int *fileFlag, int *directoryFlag, int *fileSize, 
 
 
 			//print formatted directory listing
+
+
 			/* Locate the byte for the current entry's attribute */
 			//fseek(fp, cur + attribute_offset, SEEK_SET);
 			//fread(&tmp2,1,1,fp);
@@ -130,7 +146,7 @@ int main()
 	FILE *fp;
 	int *fileFlag = malloc(sizeof(int));
 	int *directoryFlag = malloc(sizeof(int));
-	int *fileSize = malloc(sizeof(int));
+	long *fileSize = malloc(sizeof(long));
 	char *fileName = malloc(sizeof(char)*8*8);
 	int *fileDate = malloc(sizeof(int));
 	int *fileTime = malloc(sizeof(int));
