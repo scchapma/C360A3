@@ -210,7 +210,10 @@ int main()
 	}
 
 	free(osname);
-	free(label);	
+	free(label);
+	free(number_files);
+	free(number_FAT_copies);
+	free(sectors_per_FAT);	
 	fclose(fp);
 	
 	return 0;
