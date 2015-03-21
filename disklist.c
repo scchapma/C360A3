@@ -3,12 +3,6 @@
 
 #define BYTES_PER_SECTOR 512
 
-void getOSName(FILE *fp, char *osname)
-{
-	fseek(fp,3L,SEEK_SET);
-	fread(osname,1,8,fp);
-
-}
 
 int getSize(FILE *fp)
 {
@@ -30,71 +24,50 @@ void getLabel(FILE *fp, char *label)
 	fread(label,11,8,fp);
 }
 
-int getFreeSpace(FILE* fp, int size)
+void testAttributes(FILE *fp, int cur, int *fileFlag, int *directoryFlag, char *fileName)
 {
-	int n = 2;  // logical number of the first sector in Data Area
-	int base = 512; // the first byte of the FAT table 
+	//reset flags to off
+	*fileFlag = 0;
+	*directoryFlag = 0;
 
-	int tmp1 = 0;
-	int tmp2 = 0;
+	int attribute_offset = 11;
+	char tmp;
 
-	int counter = 0;
-	int result = 0;
+	fseek(fp, cur + attribute_offset, SEEK_SET);
+	fread(&tmp,1,1,fp);
 
-	int free_space = 0;
-
-	int numSectors = size;
-	
-	// The logical number for all the sectors in Data Area is from 2 to 2848
-	// numSectors = 2880 (or could be derived from getTotalSize() in mmap.c)
-       for (n = 2; n <= (numSectors-1-33+2); n++) 
+	//test for directory
+	if(tmp == 0x0F)
 	{
-		// given logical no. of sector in data area
-		// where is the corresponding entry in FAT table ?
-		// For the algorithm, refer to the last page of FAT Description: 
-		// http://webhome.csc.uvic.ca/~wkui/Courses/CSC360/FAT12Description.pdf
-		
-		// if the logical sector number is even
-		if (n % 2 == 0)
-		{
-			fseek(fp, base + 3*n/2, SEEK_SET);
-			fread(&tmp1, 1, 1, fp);  // get all 8 bits 
-			fread(&tmp2,1 ,1, fp);
-			tmp2 = tmp2 & 0x0F;   // use mask to get the low 4 bits 
-
-			// Then apply "Little Endian": (4 bits)**** + (8 bits)********
-			result = (tmp2 << 8) + tmp1;  
-		}
-
-		// if the logical sector number is odd
-		else
-		{
-			fseek(fp, base + 3*n/2, SEEK_SET);
-			fread(&tmp1, 1, 1, fp);  // get all 8 bits 
-			fread(&tmp2,1 ,1, fp);
-			tmp1 = tmp1 & 0xF0;   // use mask to get the low 4 bits 
-
-			// Then apply "Little Endian": (4 bits)**** + (8 bits)********
-			result = (tmp2 << 4) + (tmp1 >> 4); 
-		}
-		
-		if (result == 0x00)  // if the value is 0x00, that sector is free/unused
-		{
-			counter ++;
-		}
-
+		return;
 	}
-	//printf("Counter: %d\n", counter);
-	free_space = counter * BYTES_PER_SECTOR;
-	printf("Free size of the disk: %d bytes.\n", free_space);
+	else if(tmp & 0x10)
+	{
+		*directoryFlag = 1;
+		printf("Directory found.\n");
+	}
+	//test for label
+	else if (tmp & 0x08)
+	{
+		fseek(fp, cur, SEEK_SET);
+		fread(fileName,11,8,fp);
+		printf("File Name found.\n");
+	}
+	//test for file - TODO:  Logic correct?  Any other possibilities?
+	else 
+	{
+		*fileFlag = 1;
+		printf("File found.\n");
+	}
 
-	return free_space;
 }
+
+
 
 // loop through the root directory
 // Each entry has 32 bytes in root directory
-//int countRootDirFiles(FILE* fp)
-void getNumberFiles(FILE *fp, int* number_files)
+//void getNumberFiles(FILE *fp, int* number_files)
+void parseDirectory(FILE *fp, int *fileFlag, int *directoryFlag, int *fileSize, char *fileName, int *fileDate, int *fileTime)
 {
 	int base = 9728;  // the first byte of the root directory
 
@@ -103,8 +76,6 @@ void getNumberFiles(FILE *fp, int* number_files)
 
 	int attribute_offset = 11;
 
-	*number_files = 0;
-
 	fseek(fp, base, SEEK_SET);
 	//char tmp;
 	//char tmp2;
@@ -112,27 +83,36 @@ void getNumberFiles(FILE *fp, int* number_files)
 	char tmp2;
 	fread(&tmp,1,1,fp);
 
-	/* Read "notes on directory entries" for the correct conditions of how we identify a file */
-	/* Why 0x00 here? 0x00 means this entry and all remaining entries are free */
+	//traverse each item in root directory
 	while(tmp != 0x00)  
 	{
 		// Search for files
 		// 0xE5 indicates that the directory entry is free (i.e., currently unused) 
 		if (tmp != 0xE5)
 		{
+			//test for regular file or directory and set flag
+			//get file name
+			testAttributes(fp, cur, fileFlag, directoryFlag, fileName);
+
+			//get file size	
+
+
+			//get file creation date
+
+
+			//get file creation time
+
+
+			//print formatted directory listing
 			/* Locate the byte for the current entry's attribute */
-			fseek(fp, cur + attribute_offset, SEEK_SET);
-			fread(&tmp2,1,1,fp);
+			//fseek(fp, cur + attribute_offset, SEEK_SET);
+			//fread(&tmp2,1,1,fp);
+			//if ()
 			//printf("Attribute: %d\n", tmp2);
 			
 			/* What is the attribute of the entry ? */
 			/* if not 0x0F(not part of a long file name), not suddirectory, not volume label, then it is a file. */
-			/* mask for subdirectory is 0x10, mask for label is 0x08 */
-			if((tmp2 != 0x0F) && !(tmp2 & 0x10) && !(tmp2 & 0x08))
-			{
-				//*number_files = *number_files + 1;
-				(*number_files)++;
-			}	
+			/* mask for subdirectory is 0x10, mask for label is 0x08 */	
 
 		}
 		
@@ -145,72 +125,34 @@ void getNumberFiles(FILE *fp, int* number_files)
 	//printf("Number of files: %d\n", *number_files);
 }
 
-void getNumberFATCopies(FILE *fp, int* number_FAT_copies)
-{
-	fseek(fp,16L,SEEK_SET);
-	fread(number_FAT_copies,1,1,fp);
-}
-
-void getSectorsPerFAT(FILE *fp, int* sectors_per_FAT)
-{
-	int *tmp1 = malloc(sizeof(int));
-	int *tmp2 = malloc(sizeof(int));
-	
-	fseek(fp,22L,SEEK_SET);
-	fread(tmp1,1,1,fp);
-	fread(tmp2,1,1,fp);
-	*sectors_per_FAT = *tmp1+((*tmp2)<<8);
-	free(tmp1);
-	free(tmp2);	
-}
-
 int main()
 {
 	FILE *fp;
-	char *osname = malloc(sizeof(char)*8);
-	char *label = malloc(sizeof(char)*11*8);
-	int *number_files = malloc(sizeof(int));
-	int *number_FAT_copies = malloc(sizeof(int));
-	int *sectors_per_FAT = malloc(sizeof(int));
+	int *fileFlag = malloc(sizeof(int));
+	int *directoryFlag = malloc(sizeof(int));
+	int *fileSize = malloc(sizeof(int));
+	char *fileName = malloc(sizeof(char)*8*8);
+	int *fileDate = malloc(sizeof(int));
+	int *fileTime = malloc(sizeof(int));
 
 	int size;
 	
 	if ((fp=fopen("disk2.IMA","r")))
 	{
 		//printf("Successfully open the image file.\n");
-		
-		getOSName(fp,osname);
-		printf("OS Name: %s\n", osname);
-
-		getLabel(fp,label);
-		printf("Label of the disk: %s\n", label);
-
-		size = getSize(fp);	
-		//printf("Total Sectors: %d\n", size);
-		printf("Total Size of the disk: %d bytes.\n", size*512);
-		getFreeSpace(fp, size);
-
-		printf("\n========================\n");	
-
-		getNumberFiles(fp, number_files);
-		printf("The number of files in the root directory (not including subdirectories): %d\n", *number_files);
-		
-		printf("\n========================\n");	
-
-		getNumberFATCopies(fp, number_FAT_copies);
-		printf("Number of FAT copies: %d\n", *number_FAT_copies);
-
-		getSectorsPerFAT(fp, sectors_per_FAT);
-		printf("Sectors per FAT: %d\n", *sectors_per_FAT);			
-
+		parseDirectory(fp, fileFlag, directoryFlag, fileSize, fileName, fileDate, fileTime);
 	}
 	else
 	{
 		printf("Fail to open the image file.\n");
 	}
 
-	free(osname);
-	free(label);	
+	free(fileFlag);
+	free(directoryFlag);
+	free(fileSize);
+	free(fileName);
+	free(fileDate);
+	free(fileTime);	
 	fclose(fp);
 	
 	return 0;
