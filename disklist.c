@@ -75,7 +75,39 @@ void getFileSize(FILE *fp, int cur, long *fileSize)
 	*fileSize = tmp1 + (tmp2 << 8) + (tmp3 << 16) + (tmp4 << 24);
 }
 
+void getFileCreationDate(FILE *fp, int cur, int *fileDate)
+{
+	int file_date_offset = 16;
+	int tmp1, tmp2;
 
+	fseek(fp, cur + file_date_offset, SEEK_SET);
+	fread(&tmp1,1,1,fp);
+	fread(&tmp2,1,1,fp);
+
+	*fileDate = tmp1 + (tmp2 << 8);
+
+	//break date down into year, month, and day
+	//year is bits 15 to 9 - use mask 0xFE00
+	//month is bits 8 to 5 - use mask 0x01E0
+	//day is bits 4 to 0 - use mask 0x001F
+}
+
+void getFileCreationTime(FILE *fp, int cur, int *fileTime)
+{
+	int file_time_offset = 14;
+	int tmp1, tmp2;
+
+	fseek(fp, cur + file_time_offset, SEEK_SET);
+	fread(&tmp1,1,1,fp);
+	fread(&tmp2,1,1,fp);
+
+	*fileTime = tmp1 + (tmp2 << 8);
+
+	//break time down into hours, minutes and seconds
+	//hour is bits 15 to 11 - use mask 0xF800
+	//minute is bits 10 to 5 - use mask 0x07E0
+	//second is bits 4 to 0 - use mask 0x001F
+}
 
 // loop through the root directory
 // Each entry has 32 bytes in root directory
@@ -112,23 +144,14 @@ void parseDirectory(FILE *fp, int *fileFlag, int *directoryFlag, long *fileSize,
 			printf("FileSize: %ld bytes.\n", *fileSize);
 
 			//get file creation date
-
+			getFileCreationDate(fp, cur, fileDate);
+			printf("FileDate: %d\n", *fileDate);
 
 			//get file creation time
-
+			getFileCreationTime(fp, cur, fileTime);
+			printf("FileTime: %d\n", *fileTime);
 
 			//print formatted directory listing
-
-
-			/* Locate the byte for the current entry's attribute */
-			//fseek(fp, cur + attribute_offset, SEEK_SET);
-			//fread(&tmp2,1,1,fp);
-			//if ()
-			//printf("Attribute: %d\n", tmp2);
-			
-			/* What is the attribute of the entry ? */
-			/* if not 0x0F(not part of a long file name), not suddirectory, not volume label, then it is a file. */
-			/* mask for subdirectory is 0x10, mask for label is 0x08 */	
 
 		}
 		
