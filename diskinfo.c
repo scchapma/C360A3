@@ -201,12 +201,9 @@ int main()
 		printf("Number of FAT copies: %d\n", *number_FAT_copies);
 
 		getSectorsPerFAT(fp, sectors_per_FAT);
-		printf("Sectors per FAT: %d\n", *sectors_per_FAT);
-
-			
+		printf("Sectors per FAT: %d\n", *sectors_per_FAT);			
 
 	}
-
 	else
 	{
 		printf("Fail to open the image file.\n");
