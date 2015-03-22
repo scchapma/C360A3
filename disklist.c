@@ -47,7 +47,8 @@ void testAttributes(FILE *fp, int cur, int *fileFlag, int *directoryFlag, char *
 	else
 	{
 		fseek(fp, cur, SEEK_SET);
-		fread(fileName,8,8,fp);	
+		//fread(fileName,8,8,fp);	
+		fread(fileName,1,8,fp);	
 		//printf("File name: %s\n", fileName);
 
 		if(tmp & 0x10) *directoryFlag = 1;
@@ -142,7 +143,7 @@ void getFileCreationTime(FILE *fp, int cur, int *fileTime, int *hour, int *minut
 	//int second = (*fileTime & 0x001F);
 	*second = (*fileTime & 0x001F);
 
-	printf("Time: %4d - %2d - %2d\n", *hour, *minute, *second);
+	//printf("Time: %4d - %2d - %2d\n", *hour, *minute, *second);
 }
 
 // loop through the root directory
@@ -216,9 +217,9 @@ void parseDirectory(FILE *fp, int *fileFlag, int *directoryFlag, long *fileSize,
 				if (*directoryFlag) printf("D ");
 				else if (*fileFlag) printf("F ");
 
-				printf("      %ld   ", *fileSize);
-				printf("      %s    ", fileName);
-				strftime (buffer, SIZE, "%F %H:%M\n", &str_time);
+				printf("%10ld", *fileSize);
+				printf("%20s", fileName);
+				strftime (buffer, SIZE, " %F %H:%M\n", &str_time);
 				fputs(buffer, stdout);
 				//printf("%4d-%2d-%2d  %2d:%2d\n", *year, *month, *day, *hour, *minute);
 			}
