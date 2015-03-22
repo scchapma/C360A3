@@ -39,7 +39,7 @@ void testAttributes(FILE *fp, int cur, int *fileFlag, int *directoryFlag, char *
 	//test for directory
 	if(tmp == 0x0F)
 	{
-		return;
+		printf("No file or directory found.\n");
 	}
 	else if(tmp & 0x10)
 	{
@@ -63,21 +63,8 @@ void testAttributes(FILE *fp, int cur, int *fileFlag, int *directoryFlag, char *
 
 void getFileSize(FILE *fp, int cur, long *fileSize)
 {
-	/*
-	int *tmp1 = malloc(sizeof(int));
-	int *tmp2 = malloc(sizeof(int));
-	int retVal;
-	fseek(fp,19L,SEEK_SET);
-	fread(tmp1,1,1,fp);
-	fread(tmp2,1,1,fp);
-	retVal = *tmp1+((*tmp2)<<8);
-	free(tmp1);
-	free(tmp2);
-	return retVal;
-	*/
 
 	int file_size_offset = 28;
-	//int tmp1, tmp2, tmp3, tmp4;
 	int *tmp1 = malloc(sizeof(int));
 	int *tmp2 = malloc(sizeof(int));
 	int *tmp3 = malloc(sizeof(int));
@@ -86,18 +73,12 @@ void getFileSize(FILE *fp, int cur, long *fileSize)
 	long retVal;
 
 	fseek(fp, cur + file_size_offset, SEEK_SET);
-	//fread(&tmp1,1,1,fp);
-	//fread(&tmp2,1,1,fp);
-	//fread(&tmp3,1,1,fp);
-	//fread(&tmp4,1,1,fp);
 	fread(tmp1,1,1,fp);
 	fread(tmp2,1,1,fp);
 	fread(tmp3,1,1,fp);
 	fread(tmp4,1,1,fp);
 
-	retVal = *tmp1+((*tmp2)<<8) + ((*tmp3) << 16) + ((*tmp4) << 24);
-	//*fileSize = tmp1 + (tmp2 << 8) + (tmp3 << 16) + (tmp4 << 24);
-	printf("Return val: %ld\n", retVal);
+	*fileSize = *tmp1+((*tmp2)<<8) + ((*tmp3) << 16) + ((*tmp4) << 24);
 
 	free(tmp1);
 	free(tmp2);
@@ -125,8 +106,13 @@ void getFileCreationDate(FILE *fp, int cur, int *fileDate)
 
 	//break date down into year, month, and day
 	//year is bits 15 to 9 - use mask 0xFE00
+	int year = (*fileDate & 0xFE00) >> 9;
 	//month is bits 8 to 5 - use mask 0x01E0
+	int month = (*fileDate & 0x01E0) >> 5;
 	//day is bits 4 to 0 - use mask 0x001F
+	int day = (*fileDate & 0x001F);
+
+	printf("Date: %d - %d - %d\n", month, day, (year + 1980));
 }
 
 void getFileCreationTime(FILE *fp, int cur, int *fileTime)
