@@ -44,8 +44,6 @@ void getFileSize(FILE *fp, int cur, long *fileSize)
 	int *tmp3 = malloc(sizeof(int));
 	int *tmp4 = malloc(sizeof(int));
 
-	long retVal;
-
 	fseek(fp, cur + file_size_offset, SEEK_SET);
 	fread(tmp1,1,1,fp);
 	fread(tmp2,1,1,fp);
@@ -67,7 +65,6 @@ void getFileCreationDate(FILE *fp, int cur, int *fileDate, int *year, int *month
 	
 	int *tmp1 = malloc(sizeof(int));
 	int *tmp2 = malloc(sizeof(int));
-	int retVal;
 
 	fseek(fp, cur + file_date_offset, SEEK_SET);
 	fread(tmp1,1,1,fp);
@@ -94,7 +91,6 @@ void getFileCreationTime(FILE *fp, int cur, int *fileTime, int *hour, int *minut
 	
 	int *tmp1 = malloc(sizeof(int));
 	int *tmp2 = malloc(sizeof(int));
-	int retVal;
 
 	fseek(fp, cur + file_time_offset, SEEK_SET);
 	fread(tmp1,1,1,fp);
@@ -122,7 +118,6 @@ void parseDirectory(FILE *fp, int *fileFlag, int *directoryFlag, long *fileSize,
 
 	int cur = base;   // point to the first byte of the current entry
 	int offset = 32;  // Each entry has 32 bytes in root directory
-	int attribute_offset = 11;
 
 	int *tmp1 = malloc(sizeof(int));
 
@@ -139,7 +134,6 @@ void parseDirectory(FILE *fp, int *fileFlag, int *directoryFlag, long *fileSize,
 
 	//add time struct
 	struct tm str_time;
-	time_t time_of_day;
 	char buffer[SIZE];
 
 	//traverse each item in root directory
@@ -205,8 +199,6 @@ int main()
 	char *fileExtension = malloc(sizeof(char)*3*8);
 	int *fileDate = malloc(sizeof(int));
 	int *fileTime = malloc(sizeof(int));
-
-	int size;
 	
 	if ((fp=fopen("disk2.IMA","r")))
 	{
