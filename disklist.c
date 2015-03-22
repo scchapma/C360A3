@@ -26,6 +26,7 @@ void getLabel(FILE *fp, char *label)
 	fread(label,11,8,fp);
 }
 
+//void testAttributes(FILE *fp, int cur, int *fileFlag, int *directoryFlag, char *fileName, char *extension)
 void testAttributes(FILE *fp, int cur, int *fileFlag, int *directoryFlag, char *fileName)
 {
 	//reset flags to off
@@ -34,6 +35,8 @@ void testAttributes(FILE *fp, int cur, int *fileFlag, int *directoryFlag, char *
 
 	int attribute_offset = 11;
 	char tmp;
+
+	char *fileExtension = malloc(sizeof(char)*3*8);
 
 	fseek(fp, cur + attribute_offset, SEEK_SET);
 	fread(&tmp,1,1,fp);
@@ -48,13 +51,18 @@ void testAttributes(FILE *fp, int cur, int *fileFlag, int *directoryFlag, char *
 	{
 		fseek(fp, cur, SEEK_SET);
 		//fread(fileName,8,8,fp);	
-		fread(fileName,1,8,fp);	
+		fread(fileName, 1, 8, fp);	
+		fread(fileExtension, 1, 3, fp);
+		//fread(extension, 1, 3, fp);
+		printf("File Extension: %s\n", fileExtension);
 		//printf("File name: %s\n", fileName);
 
 		if(tmp & 0x10) *directoryFlag = 1;
 		else if (tmp & 0x08) return;
 		else *fileFlag = 1;
 	}
+
+	free(fileExtension);
 }
 
 void getFileSize(FILE *fp, int cur, long *fileSize)
@@ -149,6 +157,7 @@ void getFileCreationTime(FILE *fp, int cur, int *fileTime, int *hour, int *minut
 // loop through the root directory
 // Each entry has 32 bytes in root directory
 //void getNumberFiles(FILE *fp, int* number_files)
+//void parseDirectory(FILE *fp, int *fileFlag, int *directoryFlag, long *fileSize, char *fileName, char *extension, int *fileDate, int *fileTime)
 void parseDirectory(FILE *fp, int *fileFlag, int *directoryFlag, long *fileSize, char *fileName, int *fileDate, int *fileTime)
 {
 	int base = 9728;  // the first byte of the root directory
@@ -187,6 +196,7 @@ void parseDirectory(FILE *fp, int *fileFlag, int *directoryFlag, long *fileSize,
 		{
 			//test for regular file or directory and set flag
 			//get file name
+			//testAttributes(fp, cur, fileFlag, directoryFlag, fileName, extension);
 			testAttributes(fp, cur, fileFlag, directoryFlag, fileName);
 
 			//get file size	
@@ -227,6 +237,7 @@ void parseDirectory(FILE *fp, int *fileFlag, int *directoryFlag, long *fileSize,
 		
 		// Go to next entry in Root Directory
 		cur = cur + offset;
+		printf("Current: %d\n", cur);
 		fseek(fp, cur, SEEK_SET);
 		fread(&tmp,1,1,fp);
 	}
@@ -246,6 +257,7 @@ int main()
 	int *directoryFlag = malloc(sizeof(int));
 	long *fileSize = malloc(sizeof(long));
 	char *fileName = malloc(sizeof(char)*8*8);
+	//char *extension = malloc(sizeof(char)*3*8);
 	int *fileDate = malloc(sizeof(int));
 	int *fileTime = malloc(sizeof(int));
 
@@ -254,6 +266,7 @@ int main()
 	if ((fp=fopen("disk2.IMA","r")))
 	{
 		//printf("Successfully open the image file.\n");
+		//parseDirectory(fp, fileFlag, directoryFlag, fileSize, fileName, extension, fileDate, fileTime);
 		parseDirectory(fp, fileFlag, directoryFlag, fileSize, fileName, fileDate, fileTime);
 	}
 	else
@@ -265,6 +278,7 @@ int main()
 	free(directoryFlag);
 	free(fileSize);
 	free(fileName);
+	//free(extension);
 	free(fileDate);
 	free(fileTime);	
 	fclose(fp);
