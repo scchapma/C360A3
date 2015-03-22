@@ -44,6 +44,8 @@ int getFreeSpace(FILE* fp, int size)
 	int free_space = 0;
 
 	int numSectors = size;
+
+	//TODO:  calculate numSector-1-33+2 outside for loop
 	
 	// The logical number for all the sectors in Data Area is from 2 to 2848
 	// numSectors = 2880 (or could be derived from getTotalSize() in mmap.c)

@@ -165,6 +165,7 @@ void parseDirectory(FILE *fp, int *fileFlag, int *directoryFlag, long *fileSize,
 
 				printf("%10ld", *fileSize);
 				char file[50];
+				fileName = strtok(fileName, " ");
 				strcpy(file, fileName);
 				strcat(file, ".");
 				strcat(file, fileExtension);
