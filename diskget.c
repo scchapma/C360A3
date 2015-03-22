@@ -14,9 +14,9 @@ int main()
 	char buffer[512];
 
 	char *tmp1 = malloc(sizeof(char));
-	char *tmp2 = malloc(sizeof(char));
-	char *tmp3 = malloc(sizeof(char));
-	char *tmp4 = malloc(sizeof(char));
+	//char *tmp2 = malloc(sizeof(char));
+	//char *tmp3 = malloc(sizeof(char));
+	//char *tmp4 = malloc(sizeof(char));
 
 	int base = 16896;
 	int i = 0;
@@ -38,7 +38,6 @@ int main()
 			fwrite(buffer, 1, 512, fp2);
 			cur += 512;
 		}
-
 		fclose(fp2);
 	}
 	else
