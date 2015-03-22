@@ -86,7 +86,7 @@ void getFileSize(FILE *fp, int cur, long *fileSize)
 	free(tmp4);
 }
 
-void getFileCreationDate(FILE *fp, int cur, int *fileDate)
+void getFileCreationDate(FILE *fp, int cur, int *fileDate, int *year, int *month, int *day)
 {
 	
 	int file_date_offset = 16;
@@ -106,16 +106,19 @@ void getFileCreationDate(FILE *fp, int cur, int *fileDate)
 
 	//break date down into year, month, and day
 	//year is bits 15 to 9 - use mask 0xFE00
-	int year = (*fileDate & 0xFE00) >> 9;
+	//int year = (*fileDate & 0xFE00) >> 9;
+	*year = (*fileDate & 0xFE00) >> 9;
 	//month is bits 8 to 5 - use mask 0x01E0
-	int month = (*fileDate & 0x01E0) >> 5;
+	//int month = (*fileDate & 0x01E0) >> 5;
+	*month = (*fileDate & 0x01E0) >> 5;
 	//day is bits 4 to 0 - use mask 0x001F
-	int day = (*fileDate & 0x001F);
+	//int day = (*fileDate & 0x001F);
+	*day = (*fileDate & 0x001F);
 
-	printf("Date: %d - %d - %d\n", month, day, (year + 1980));
+	printf("Date: %d - %d - %d\n", *month, *day, (*year + 1980));
 }
 
-void getFileCreationTime(FILE *fp, int cur, int *fileTime)
+void getFileCreationTime(FILE *fp, int cur, int *fileTime, int *hour, int *minute, int *second)
 {
 
 	int file_time_offset = 14;
@@ -135,13 +138,16 @@ void getFileCreationTime(FILE *fp, int cur, int *fileTime)
 
 	//break time down into hours, minutes and seconds
 	//hour is bits 15 to 11 - use mask 0xF800
-	int hour = (*fileTime & 0xF800) >> 11;
+	//int hour = (*fileTime & 0xF800) >> 11;
+	*hour = (*fileTime & 0xF800) >> 11;
 	//minute is bits 10 to 5 - use mask 0x07E0
-	int minute = (*fileTime & 0x07E0)>> 5;
+	//int minute = (*fileTime & 0x07E0)>> 5;
+	*minute = (*fileTime & 0x07E0)>> 5;
 	//second is bits 4 to 0 - use mask 0x001F
-	int second = (*fileTime & 0x001F);
+	//int second = (*fileTime & 0x001F);
+	*second = (*fileTime & 0x001F);
 
-	printf("Time: %d - %d - %d\n", hour, minute, second);
+	printf("Time: %d - %d - %d\n", *hour, *minute, *second);
 }
 
 // loop through the root directory
@@ -163,6 +169,14 @@ void parseDirectory(FILE *fp, int *fileFlag, int *directoryFlag, long *fileSize,
 	char tmp2;
 	fread(&tmp,1,1,fp);
 
+	//create additional pointers for time and date
+	int *year = malloc(sizeof(int));
+	int *month = malloc(sizeof(int));
+	int *day = malloc(sizeof(int));
+	int *hour = malloc(sizeof(int));
+	int *minute = malloc(sizeof(int));
+	int *second = malloc(sizeof(int));
+
 	//traverse each item in root directory
 	while(tmp != 0x00)  
 	{
@@ -179,11 +193,11 @@ void parseDirectory(FILE *fp, int *fileFlag, int *directoryFlag, long *fileSize,
 			printf("FileSize: %ld bytes.\n", *fileSize);
 
 			//get file creation date
-			getFileCreationDate(fp, cur, fileDate);
+			getFileCreationDate(fp, cur, fileDate, year, month, day);
 			printf("FileDate: %d\n", *fileDate);
 
 			//get file creation time
-			getFileCreationTime(fp, cur, fileTime);
+			getFileCreationTime(fp, cur, fileTime, hour, minute, second);
 			printf("FileTime: %d\n", *fileTime);
 
 			//print formatted directory listing
