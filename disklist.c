@@ -190,18 +190,26 @@ void parseDirectory(FILE *fp, int *fileFlag, int *directoryFlag, long *fileSize,
 
 			//get file size	
 			getFileSize(fp, cur, fileSize);
-			printf("FileSize: %ld bytes.\n", *fileSize);
+			//printf("FileSize: %ld bytes.\n", *fileSize);
 
 			//get file creation date
 			getFileCreationDate(fp, cur, fileDate, year, month, day);
-			printf("FileDate: %d\n", *fileDate);
+			//printf("FileDate: %d\n", *fileDate);
 
 			//get file creation time
 			getFileCreationTime(fp, cur, fileTime, hour, minute, second);
-			printf("FileTime: %d\n", *fileTime);
+			//printf("FileTime: %d\n", *fileTime);
 
 			//print formatted directory listing
+			if(*directoryFlag || *fileFlag){
+				if (*directoryFlag) printf("D ");
+				else if (*fileFlag) printf("F ");
+				else printf(" ");
 
+				printf("      %ld   ", *fileSize);
+				printf("      %s    ", fileName);
+				printf("%d-%d-%d  %d:%d\n", *year, *month, *day, *hour, *minute);
+			}
 		}
 		
 		// Go to next entry in Root Directory
@@ -209,8 +217,13 @@ void parseDirectory(FILE *fp, int *fileFlag, int *directoryFlag, long *fileSize,
 		fseek(fp, cur, SEEK_SET);
 		fread(&tmp,1,1,fp);
 	}
-	//*number_files = counter;
-	//printf("Number of files: %d\n", *number_files);
+	
+	free(year);
+	free(month);
+	free(day);
+	free(hour);
+	free(minute);
+	free(second);
 }
 
 int main()
