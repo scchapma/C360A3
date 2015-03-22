@@ -63,6 +63,7 @@ void testAttributes(FILE *fp, int cur, int *fileFlag, int *directoryFlag, char *
 
 void getFileSize(FILE *fp, int cur, long *fileSize)
 {
+	/*
 	int *tmp1 = malloc(sizeof(int));
 	int *tmp2 = malloc(sizeof(int));
 	int retVal;
@@ -73,17 +74,35 @@ void getFileSize(FILE *fp, int cur, long *fileSize)
 	free(tmp1);
 	free(tmp2);
 	return retVal;
+	*/
 
 	int file_size_offset = 28;
-	int tmp1, tmp2, tmp3, tmp4;
+	//int tmp1, tmp2, tmp3, tmp4;
+	int *tmp1 = malloc(sizeof(int));
+	int *tmp2 = malloc(sizeof(int));
+	int *tmp3 = malloc(sizeof(int));
+	int *tmp4 = malloc(sizeof(int));
+
+	long retVal;
 
 	fseek(fp, cur + file_size_offset, SEEK_SET);
-	fread(&tmp1,1,1,fp);
-	fread(&tmp2,1,1,fp);
-	fread(&tmp3,1,1,fp);
-	fread(&tmp4,1,1,fp);
+	//fread(&tmp1,1,1,fp);
+	//fread(&tmp2,1,1,fp);
+	//fread(&tmp3,1,1,fp);
+	//fread(&tmp4,1,1,fp);
+	fread(tmp1,1,1,fp);
+	fread(tmp2,1,1,fp);
+	fread(tmp3,1,1,fp);
+	fread(tmp4,1,1,fp);
 
-	*fileSize = tmp1 + (tmp2 << 8) + (tmp3 << 16) + (tmp4 << 24);
+	retVal = *tmp1+((*tmp2)<<8) + ((*tmp3) << 16) + ((*tmp4) << 24);
+	//*fileSize = tmp1 + (tmp2 << 8) + (tmp3 << 16) + (tmp4 << 24);
+	printf("Return val: %ld\n", retVal);
+
+	free(tmp1);
+	free(tmp2);
+	free(tmp3);
+	free(tmp4);
 }
 
 void getFileCreationDate(FILE *fp, int cur, int *fileDate)
