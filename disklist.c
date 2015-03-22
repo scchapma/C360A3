@@ -135,8 +135,13 @@ void getFileCreationTime(FILE *fp, int cur, int *fileTime)
 
 	//break time down into hours, minutes and seconds
 	//hour is bits 15 to 11 - use mask 0xF800
+	int hour = (*fileTime & 0xF800) >> 11;
 	//minute is bits 10 to 5 - use mask 0x07E0
+	int minute = (*fileTime & 0x07E0)>> 5;
 	//second is bits 4 to 0 - use mask 0x001F
+	int second = (*fileTime & 0x001F);
+
+	printf("Time: %d - %d - %d\n", hour, minute, second);
 }
 
 // loop through the root directory
