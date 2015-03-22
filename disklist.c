@@ -3,6 +3,7 @@
 #include<time.h>
 
 #define BYTES_PER_SECTOR 512
+#define SIZE 256
 
 
 int getSize(FILE *fp)
@@ -41,33 +42,17 @@ void testAttributes(FILE *fp, int cur, int *fileFlag, int *directoryFlag, char *
 	if(tmp == 0x0F)
 	{
 		//printf("No file or directory found.\n");
+		return;
 	}
-	//smooth out logic
-	else if(tmp & 0x10)
-	{
-		*directoryFlag = 1;
-		//printf("Directory found.\n");
-		fseek(fp, cur, SEEK_SET);
-		fread(fileName,8,8,fp);	
-		printf("File name: %s\n", fileName);
-	}
-	//test for label
-	else if (tmp & 0x08)
+	else
 	{
 		fseek(fp, cur, SEEK_SET);
-		//fread(fileName,11,8,fp
 		fread(fileName,8,8,fp);	
-		printf("File name: %s\n", fileName);
-		//printf("File Name found.\n");
-	}
-	//test for file - TODO:  Logic correct?  Any other possibilities?
-	else 
-	{
-		*fileFlag = 1;
-		//printf("File found.\n");
-		fseek(fp, cur, SEEK_SET);
-		fread(fileName,8,8,fp);	
-		printf("File name: %s\n", fileName);
+		//printf("File name: %s\n", fileName);
+
+		if(tmp & 0x10) *directoryFlag = 1;
+		else if (tmp & 0x08) return;
+		else *fileFlag = 1;
 	}
 }
 
@@ -190,6 +175,7 @@ void parseDirectory(FILE *fp, int *fileFlag, int *directoryFlag, long *fileSize,
 	//add time struct
 	struct tm str_time;
 	time_t time_of_day;
+	char buffer[SIZE];
 
 	//traverse each item in root directory
 	while(tmp != 0x00)  
@@ -223,7 +209,7 @@ void parseDirectory(FILE *fp, int *fileFlag, int *directoryFlag, long *fileSize,
 			str_time.tm_sec = *second;
 
 			time_of_day = mktime(&str_time);
-			printf(ctime(&time_of_day));
+			//printf(ctime(&time_of_day));
 
 			//print formatted directory listing
 			if(*directoryFlag || *fileFlag){
@@ -232,7 +218,9 @@ void parseDirectory(FILE *fp, int *fileFlag, int *directoryFlag, long *fileSize,
 
 				printf("      %ld   ", *fileSize);
 				printf("      %s    ", fileName);
-				printf("%4d-%2d-%2d  %2d:%2d\n", *year, *month, *day, *hour, *minute);
+				strftime (buffer, SIZE, "The date and time are: %F\n", &str_time);
+				fputs(buffer, stdout);
+				//printf("%4d-%2d-%2d  %2d:%2d\n", *year, *month, *day, *hour, *minute);
 			}
 		}
 		
