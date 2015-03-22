@@ -147,7 +147,7 @@ void getFileCreationTime(FILE *fp, int cur, int *fileTime, int *hour, int *minut
 	//int second = (*fileTime & 0x001F);
 	*second = (*fileTime & 0x001F);
 
-	printf("Time: %d - %d - %d\n", *hour, *minute, *second);
+	printf("Time: %4d - %2d - %2d\n", *hour, *minute, *second);
 }
 
 // loop through the root directory
@@ -177,6 +177,8 @@ void parseDirectory(FILE *fp, int *fileFlag, int *directoryFlag, long *fileSize,
 	int *minute = malloc(sizeof(int));
 	int *second = malloc(sizeof(int));
 
+	//add time struct
+
 	//traverse each item in root directory
 	while(tmp != 0x00)  
 	{
@@ -200,15 +202,16 @@ void parseDirectory(FILE *fp, int *fileFlag, int *directoryFlag, long *fileSize,
 			getFileCreationTime(fp, cur, fileTime, hour, minute, second);
 			//printf("FileTime: %d\n", *fileTime);
 
+			//populate time struct
+
 			//print formatted directory listing
 			if(*directoryFlag || *fileFlag){
 				if (*directoryFlag) printf("D ");
 				else if (*fileFlag) printf("F ");
-				else printf(" ");
 
 				printf("      %ld   ", *fileSize);
 				printf("      %s    ", fileName);
-				printf("%d-%d-%d  %d:%d\n", *year, *month, *day, *hour, *minute);
+				printf("%4d-%2d-%2d  %2d:%2d\n", *year, *month, *day, *hour, *minute);
 			}
 		}
 		
