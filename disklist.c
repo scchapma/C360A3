@@ -6,29 +6,7 @@
 #define BYTES_PER_SECTOR 512
 #define SIZE 256
 
-
-int getSize(FILE *fp)
-{
-	int *tmp1 = malloc(sizeof(int));
-	int *tmp2 = malloc(sizeof(int));
-	int retVal;
-	fseek(fp,19L,SEEK_SET);
-	fread(tmp1,1,1,fp);
-	fread(tmp2,1,1,fp);
-	retVal = *tmp1+((*tmp2)<<8);
-	free(tmp1);
-	free(tmp2);
-	return retVal;
-}
-
-void getLabel(FILE *fp, char *label)
-{
-	fseek(fp,43L,SEEK_SET);
-	fread(label,11,8,fp);
-}
-
 void testAttributes(FILE *fp, int cur, int *fileFlag, int *directoryFlag, char *fileName, char *extension)
-//void testAttributes(FILE *fp, int cur, int *fileFlag, int *directoryFlag, char *fileName)
 {
 	//reset flags to off
 	*fileFlag = 0;
@@ -37,33 +15,24 @@ void testAttributes(FILE *fp, int cur, int *fileFlag, int *directoryFlag, char *
 	int attribute_offset = 11;
 	char tmp;
 
-	char *fileExtension = malloc(sizeof(char)*3*8);
-
 	fseek(fp, cur + attribute_offset, SEEK_SET);
 	fread(&tmp,1,1,fp);
 
 	//test for directory
 	if(tmp == 0x0F)
 	{
-		//printf("No file or directory found.\n");
 		return;
 	}
 	else
 	{
-		fseek(fp, cur, SEEK_SET);
-		//fread(fileName,8,8,fp);	
+		fseek(fp, cur, SEEK_SET);	
 		fread(fileName, 1, 8, fp);	
-		//fread(fileExtension, 1, 3, fp);
 		fread(extension, 1, 3, fp);
-		printf("File Extension: %s\n", extension);
-		//printf("File name: %s\n", fileName);
 
 		if(tmp & 0x10) *directoryFlag = 1;
 		else if (tmp & 0x08) return;
 		else *fileFlag = 1;
 	}
-
-	free(fileExtension);
 }
 
 void getFileSize(FILE *fp, int cur, long *fileSize)
@@ -111,16 +80,11 @@ void getFileCreationDate(FILE *fp, int cur, int *fileDate, int *year, int *month
 
 	//break date down into year, month, and day
 	//year is bits 15 to 9 - use mask 0xFE00
-	//int year = (*fileDate & 0xFE00) >> 9;
 	*year = (*fileDate & 0xFE00) >> 9;
 	//month is bits 8 to 5 - use mask 0x01E0
-	//int month = (*fileDate & 0x01E0) >> 5;
 	*month = (*fileDate & 0x01E0) >> 5;
 	//day is bits 4 to 0 - use mask 0x001F
-	//int day = (*fileDate & 0x001F);
 	*day = (*fileDate & 0x001F);
-
-	//printf("Date: %d - %d - %d\n", *month, *day, (*year + 1980));
 }
 
 void getFileCreationTime(FILE *fp, int cur, int *fileTime, int *hour, int *minute, int *second)
@@ -143,23 +107,16 @@ void getFileCreationTime(FILE *fp, int cur, int *fileTime, int *hour, int *minut
 
 	//break time down into hours, minutes and seconds
 	//hour is bits 15 to 11 - use mask 0xF800
-	//int hour = (*fileTime & 0xF800) >> 11;
 	*hour = (*fileTime & 0xF800) >> 11;
 	//minute is bits 10 to 5 - use mask 0x07E0
-	//int minute = (*fileTime & 0x07E0)>> 5;
 	*minute = (*fileTime & 0x07E0)>> 5;
 	//second is bits 4 to 0 - use mask 0x001F
-	//int second = (*fileTime & 0x001F);
 	*second = (*fileTime & 0x001F);
-
-	//printf("Time: %4d - %2d - %2d\n", *hour, *minute, *second);
 }
 
 // loop through the root directory
 // Each entry has 32 bytes in root directory
-//void getNumberFiles(FILE *fp, int* number_files)
 void parseDirectory(FILE *fp, int *fileFlag, int *directoryFlag, long *fileSize, char *fileName, char *extension, int *fileDate, int *fileTime)
-//void parseDirectory(FILE *fp, int *fileFlag, int *directoryFlag, long *fileSize, char *fileName, int *fileDate, int *fileTime)
 {
 	int base = 9728;  // the first byte of the root directory
 
@@ -194,21 +151,11 @@ void parseDirectory(FILE *fp, int *fileFlag, int *directoryFlag, long *fileSize,
 		{
 			//test for regular file or directory and set flag
 			//get file name
-			testAttributes(fp, cur, fileFlag, directoryFlag, fileName, extension);
-			//testAttributes(fp, cur, fileFlag, directoryFlag, fileName);
-
-			//get file size	
+			testAttributes(fp, cur, fileFlag, directoryFlag, fileName, extension);			
 			getFileSize(fp, cur, fileSize);
-			//printf("FileSize: %ld bytes.\n", *fileSize);
-
-			//get file creation date
 			getFileCreationDate(fp, cur, fileDate, year, month, day);
-			//printf("FileDate: %d\n", *fileDate);
-
-			//get file creation time
 			getFileCreationTime(fp, cur, fileTime, hour, minute, second);
-			//printf("FileTime: %d\n", *fileTime);
-
+		
 			//populate time struct
 			str_time.tm_year = *year + 80;
 			str_time.tm_mon = *month - 1;
@@ -216,9 +163,6 @@ void parseDirectory(FILE *fp, int *fileFlag, int *directoryFlag, long *fileSize,
 			str_time.tm_hour = *hour;
 			str_time.tm_min = *minute;
 			str_time.tm_sec = *second;
-
-			//time_of_day = mktime(&str_time);
-			//printf(ctime(&time_of_day));
 
 			//print formatted directory listing
 			if(*directoryFlag || *fileFlag){
@@ -233,13 +177,11 @@ void parseDirectory(FILE *fp, int *fileFlag, int *directoryFlag, long *fileSize,
 				printf("%20s", file);
 				strftime (buffer, SIZE, " %F %H:%M\n", &str_time);
 				fputs(buffer, stdout);
-				//printf("%4d-%2d-%2d  %2d:%2d\n", *year, *month, *day, *hour, *minute);
 			}
 		}
 		
 		// Go to next entry in Root Directory
 		cur = cur + offset;
-		printf("Current: %d\n", cur);
 		fseek(fp, cur, SEEK_SET);
 		fread(tmp1,1,1,fp);
 	}
@@ -250,7 +192,6 @@ void parseDirectory(FILE *fp, int *fileFlag, int *directoryFlag, long *fileSize,
 	free(hour);
 	free(minute);
 	free(second);
-
 	free(tmp1);
 }
 
@@ -271,7 +212,6 @@ int main()
 	{
 		//printf("Successfully open the image file.\n");
 		parseDirectory(fp, fileFlag, directoryFlag, fileSize, fileName, extension, fileDate, fileTime);
-		//parseDirectory(fp, fileFlag, directoryFlag, fileSize, fileName, fileDate, fileTime);
 	}
 	else
 	{
