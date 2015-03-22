@@ -10,18 +10,19 @@ void getOSName(FILE *fp, char *osname)
 
 }
 
-int getSize(FILE *fp)
+void getSize(FILE *fp, int *fileSize)
 {
 	int *tmp1 = malloc(sizeof(int));
 	int *tmp2 = malloc(sizeof(int));
-	int retVal;
+	//int retVal;
 	fseek(fp,19L,SEEK_SET);
 	fread(tmp1,1,1,fp);
 	fread(tmp2,1,1,fp);
-	retVal = *tmp1+((*tmp2)<<8);
+	*fileSize = *tmp1+((*tmp2)<<8);
+	
 	free(tmp1);
 	free(tmp2);
-	return retVal;
+	//return retVal;
 }
 
 void getLabel(FILE *fp, char *label)
@@ -30,7 +31,7 @@ void getLabel(FILE *fp, char *label)
 	fread(label,11,8,fp);
 }
 
-int getFreeSpace(FILE* fp, int size)
+int getFreeSpace(FILE* fp, int *fileSize)
 {
 	int n = 2;  // logical number of the first sector in Data Area
 	int base = 512; // the first byte of the FAT table 
@@ -43,7 +44,7 @@ int getFreeSpace(FILE* fp, int size)
 
 	int free_space = 0;
 
-	int numSectors = size;
+	int numSectors = *fileSize;
 
 	//TODO:  calculate numSector-1-33+2 outside for loop
 	
@@ -88,7 +89,6 @@ int getFreeSpace(FILE* fp, int size)
 	}
 	//printf("Counter: %d\n", counter);
 	free_space = counter * BYTES_PER_SECTOR;
-	printf("Free size of the disk: %d bytes.\n", free_space);
 
 	return free_space;
 }
@@ -96,41 +96,44 @@ int getFreeSpace(FILE* fp, int size)
 // loop through the root directory
 // Each entry has 32 bytes in root directory
 //int countRootDirFiles(FILE* fp)
-void getNumberFiles(FILE *fp, int* number_files)
+void getNumberFiles(FILE *fp, int* number_files, char* fileName)
 {
 	int base = 9728;  // the first byte of the root directory
-
 	int cur = base;   // point to the first byte of the current entry
 	int offset = 32;  // Each entry has 32 bytes in root directory
-
 	int attribute_offset = 11;
 
 	*number_files = 0;
 
-	fseek(fp, base, SEEK_SET);
-	//char tmp;
-	//char tmp2;
-	int tmp;
-	char tmp2;
-	fread(&tmp,1,1,fp);
+	int *tmp1 = malloc(sizeof(int));
+	char *tmp2 = malloc(sizeof(char));
+
+	fseek(fp, base, SEEK_SET);	
+	fread(tmp1,1,1,fp);
 
 	/* Read "notes on directory entries" for the correct conditions of how we identify a file */
 	/* Why 0x00 here? 0x00 means this entry and all remaining entries are free */
-	while(tmp != 0x00)  
+	while(*tmp1 != 0x00)  
 	{
 		// Search for files
 		// 0xE5 indicates that the directory entry is free (i.e., currently unused) 
-		if (tmp != 0xE5)
+		if (*tmp1 != 0xE5)
 		{
 			/* Locate the byte for the current entry's attribute */
 			fseek(fp, cur + attribute_offset, SEEK_SET);
-			fread(&tmp2,1,1,fp);
+			fread(tmp2,1,1,fp);
 			//printf("Attribute: %d\n", tmp2);
 			
 			/* What is the attribute of the entry ? */
 			/* if not 0x0F(not part of a long file name), not suddirectory, not volume label, then it is a file. */
 			/* mask for subdirectory is 0x10, mask for label is 0x08 */
-			if((tmp2 != 0x0F) && !(tmp2 & 0x10) && !(tmp2 & 0x08))
+			if((*tmp2 != 0x0F) && (*tmp2 & 0x08))
+			{
+				//printf("Enter label if statement\n");
+				fseek(fp, cur, SEEK_SET);	
+				fread(fileName, 1, 8, fp);
+			}
+			if((*tmp2 != 0x0F) && !(*tmp2 & 0x10) && !(*tmp2 & 0x08))
 			{
 				//*number_files = *number_files + 1;
 				(*number_files)++;
@@ -141,10 +144,11 @@ void getNumberFiles(FILE *fp, int* number_files)
 		// Go to next entry in Root Directory
 		cur = cur + offset;
 		fseek(fp, cur, SEEK_SET);
-		fread(&tmp,1,1,fp);
+		fread(tmp1,1,1,fp);
 	}
-	//*number_files = counter;
-	//printf("Number of files: %d\n", *number_files);
+
+	free(tmp1);
+	free(tmp2);
 }
 
 void getNumberFATCopies(FILE *fp, int* number_FAT_copies)
@@ -171,38 +175,38 @@ int main()
 	FILE *fp;
 	char *osname = malloc(sizeof(char)*8);
 	char *label = malloc(sizeof(char)*11*8);
+	int *fileSize = malloc(sizeof(int));
+	char *fileName = malloc(sizeof(char)*8*8);
 	int *number_files = malloc(sizeof(int));
 	int *number_FAT_copies = malloc(sizeof(int));
 	int *sectors_per_FAT = malloc(sizeof(int));
 
-	int size;
+	int free_space;
+
+	//int size;
 	
 	if ((fp=fopen("disk2.IMA","r")))
 	{
 		//printf("Successfully open the image file.\n");
 		
 		getOSName(fp,osname);
-		printf("OS Name: %s\n", osname);
-
 		getLabel(fp,label);
-		printf("Label of the disk: %s\n", label);
-
-		size = getSize(fp);	
-		//printf("Total Sectors: %d\n", size);
-		printf("Total Size of the disk: %d bytes.\n", size*512);
-		getFreeSpace(fp, size);
-
-		printf("\n========================\n");	
-
-		getNumberFiles(fp, number_files);
-		printf("The number of files in the root directory (not including subdirectories): %d\n", *number_files);
-		
-		printf("\n========================\n");	
-
+		//size = getSize(fp);
+		getSize(fp, fileSize);		
+		free_space = getFreeSpace(fp, fileSize);
+		getNumberFiles(fp, number_files, fileName);
 		getNumberFATCopies(fp, number_FAT_copies);
-		printf("Number of FAT copies: %d\n", *number_FAT_copies);
-
 		getSectorsPerFAT(fp, sectors_per_FAT);
+
+		printf("OS Name: %s\n", osname);		
+		printf("Label of the disk: %s\n", fileName);
+		printf("Total Size of the disk: %d bytes.\n", (*fileSize)*512);
+		printf("Free size of the disk: %d bytes.\n", free_space);
+		printf("\n========================\n");			
+		printf("The number of files in the root directory (not including subdirectories): %d\n", *number_files);
+		//printf("The file name is: %s", fileName);		
+		printf("\n========================\n");			
+		printf("Number of FAT copies: %d\n", *number_FAT_copies);		
 		printf("Sectors per FAT: %d\n", *sectors_per_FAT);			
 
 	}
@@ -213,6 +217,7 @@ int main()
 
 	free(osname);
 	free(label);
+	free(fileName);
 	free(number_files);
 	free(number_FAT_copies);
 	free(sectors_per_FAT);	
