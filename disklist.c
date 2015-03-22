@@ -110,6 +110,34 @@ void getFileCreationTime(FILE *fp, int cur, int *fileTime, int *hour, int *minut
 	*second = (*fileTime & 0x001F);
 }
 
+void setTimeStruct(struct tm str_time, int *year, int *month, int *day, int *hour, int *minute, int *second)
+{
+	str_time.tm_year = *year + 80;
+	str_time.tm_mon = *month - 1;
+	str_time.tm_mday = *day;
+	str_time.tm_hour = *hour;
+	str_time.tm_min = *minute;
+	str_time.tm_sec = *second;
+}
+
+void printReport(struct tm str_time, char *buffer, int *directoryFlag, int *fileFlag, long *fileSize, char *fileName, char *fileExtension)
+{
+	if(*directoryFlag || *fileFlag){
+		if (*directoryFlag) printf("D ");
+		else if (*fileFlag) printf("F ");
+
+		printf("%10ld", *fileSize);
+		char file[50];
+		fileName = strtok(fileName, " ");
+		strcpy(file, fileName);
+		strcat(file, ".");
+		strcat(file, fileExtension);
+		printf("%20s", file);
+		strftime (buffer, SIZE, " %F %H:%M\n", &str_time);
+		fputs(buffer, stdout);
+	}
+}
+
 // loop through the root directory
 // Each entry has 32 bytes in root directory
 void parseDirectory(FILE *fp, int *fileFlag, int *directoryFlag, long *fileSize, char *fileName, char *fileExtension, int *fileDate, int *fileTime)
@@ -149,30 +177,8 @@ void parseDirectory(FILE *fp, int *fileFlag, int *directoryFlag, long *fileSize,
 			getFileSize(fp, cur, fileSize);
 			getFileCreationDate(fp, cur, fileDate, year, month, day);
 			getFileCreationTime(fp, cur, fileTime, hour, minute, second);
-		
-			//populate time struct
-			str_time.tm_year = *year + 80;
-			str_time.tm_mon = *month - 1;
-			str_time.tm_mday = *day;
-			str_time.tm_hour = *hour;
-			str_time.tm_min = *minute;
-			str_time.tm_sec = *second;
-
-			//print formatted directory listing
-			if(*directoryFlag || *fileFlag){
-				if (*directoryFlag) printf("D ");
-				else if (*fileFlag) printf("F ");
-
-				printf("%10ld", *fileSize);
-				char file[50];
-				fileName = strtok(fileName, " ");
-				strcpy(file, fileName);
-				strcat(file, ".");
-				strcat(file, fileExtension);
-				printf("%20s", file);
-				strftime (buffer, SIZE, " %F %H:%M\n", &str_time);
-				fputs(buffer, stdout);
-			}
+			setTimeStruct(str_time, year, month, day, hour, minute, second);
+			printReport(str_time, buffer, directoryFlag, fileFlag, fileSize, fileName, fileExtension);
 		}
 		
 		// Go to next entry in Root Directory
