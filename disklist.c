@@ -42,16 +42,22 @@ void testAttributes(FILE *fp, int cur, int *fileFlag, int *directoryFlag, char *
 	{
 		//printf("No file or directory found.\n");
 	}
+	//smooth out logic
 	else if(tmp & 0x10)
 	{
 		*directoryFlag = 1;
 		//printf("Directory found.\n");
+		fseek(fp, cur, SEEK_SET);
+		fread(fileName,8,8,fp);	
+		printf("File name: %s\n", fileName);
 	}
 	//test for label
 	else if (tmp & 0x08)
 	{
 		fseek(fp, cur, SEEK_SET);
-		fread(fileName,11,8,fp);
+		//fread(fileName,11,8,fp
+		fread(fileName,8,8,fp);	
+		printf("File name: %s\n", fileName);
 		//printf("File Name found.\n");
 	}
 	//test for file - TODO:  Logic correct?  Any other possibilities?
@@ -59,6 +65,9 @@ void testAttributes(FILE *fp, int cur, int *fileFlag, int *directoryFlag, char *
 	{
 		*fileFlag = 1;
 		//printf("File found.\n");
+		fseek(fp, cur, SEEK_SET);
+		fread(fileName,8,8,fp);	
+		printf("File name: %s\n", fileName);
 	}
 }
 
