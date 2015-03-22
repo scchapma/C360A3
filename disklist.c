@@ -1,5 +1,6 @@
 #include<stdio.h>
 #include<stdlib.h>
+#include<time.h>
 
 #define BYTES_PER_SECTOR 512
 
@@ -39,25 +40,25 @@ void testAttributes(FILE *fp, int cur, int *fileFlag, int *directoryFlag, char *
 	//test for directory
 	if(tmp == 0x0F)
 	{
-		printf("No file or directory found.\n");
+		//printf("No file or directory found.\n");
 	}
 	else if(tmp & 0x10)
 	{
 		*directoryFlag = 1;
-		printf("Directory found.\n");
+		//printf("Directory found.\n");
 	}
 	//test for label
 	else if (tmp & 0x08)
 	{
 		fseek(fp, cur, SEEK_SET);
 		fread(fileName,11,8,fp);
-		printf("File Name found.\n");
+		//printf("File Name found.\n");
 	}
 	//test for file - TODO:  Logic correct?  Any other possibilities?
 	else 
 	{
 		*fileFlag = 1;
-		printf("File found.\n");
+		//printf("File found.\n");
 	}
 }
 
@@ -115,7 +116,7 @@ void getFileCreationDate(FILE *fp, int cur, int *fileDate, int *year, int *month
 	//int day = (*fileDate & 0x001F);
 	*day = (*fileDate & 0x001F);
 
-	printf("Date: %d - %d - %d\n", *month, *day, (*year + 1980));
+	//printf("Date: %d - %d - %d\n", *month, *day, (*year + 1980));
 }
 
 void getFileCreationTime(FILE *fp, int cur, int *fileTime, int *hour, int *minute, int *second)
@@ -147,7 +148,7 @@ void getFileCreationTime(FILE *fp, int cur, int *fileTime, int *hour, int *minut
 	//int second = (*fileTime & 0x001F);
 	*second = (*fileTime & 0x001F);
 
-	printf("Time: %4d - %2d - %2d\n", *hour, *minute, *second);
+	//printf("Time: %4d - %2d - %2d\n", *hour, *minute, *second);
 }
 
 // loop through the root directory
@@ -178,6 +179,8 @@ void parseDirectory(FILE *fp, int *fileFlag, int *directoryFlag, long *fileSize,
 	int *second = malloc(sizeof(int));
 
 	//add time struct
+	struct tm str_time;
+	time_t time_of_day;
 
 	//traverse each item in root directory
 	while(tmp != 0x00)  
@@ -203,6 +206,15 @@ void parseDirectory(FILE *fp, int *fileFlag, int *directoryFlag, long *fileSize,
 			//printf("FileTime: %d\n", *fileTime);
 
 			//populate time struct
+			str_time.tm_year = *year + 80;
+			str_time.tm_mon = *month - 1;
+			str_time.tm_mday = *day;
+			str_time.tm_hour = *hour;
+			str_time.tm_min = *minute;
+			str_time.tm_sec = *second;
+
+			time_of_day = mktime(&str_time);
+			printf(ctime(&time_of_day));
 
 			//print formatted directory listing
 			if(*directoryFlag || *fileFlag){
