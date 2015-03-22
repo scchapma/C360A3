@@ -142,7 +142,7 @@ void getFileCreationTime(FILE *fp, int cur, int *fileTime, int *hour, int *minut
 	//int second = (*fileTime & 0x001F);
 	*second = (*fileTime & 0x001F);
 
-	//printf("Time: %4d - %2d - %2d\n", *hour, *minute, *second);
+	printf("Time: %4d - %2d - %2d\n", *hour, *minute, *second);
 }
 
 // loop through the root directory
@@ -208,9 +208,6 @@ void parseDirectory(FILE *fp, int *fileFlag, int *directoryFlag, long *fileSize,
 			str_time.tm_min = *minute;
 			str_time.tm_sec = *second;
 
-			time_of_day = mktime(&str_time);
-			//printf(ctime(&time_of_day));
-
 			//print formatted directory listing
 			if(*directoryFlag || *fileFlag){
 				if (*directoryFlag) printf("D ");
@@ -218,7 +215,7 @@ void parseDirectory(FILE *fp, int *fileFlag, int *directoryFlag, long *fileSize,
 
 				printf("      %ld   ", *fileSize);
 				printf("      %s    ", fileName);
-				strftime (buffer, SIZE, "The date and time are: %F\n", &str_time);
+				strftime (buffer, SIZE, "%F %H:%M\n", &str_time);
 				fputs(buffer, stdout);
 				//printf("%4d-%2d-%2d  %2d:%2d\n", *year, *month, *day, *hour, *minute);
 			}
