@@ -30,8 +30,8 @@ void getSize(FILE *fp, unsigned int *fileSize)
 	*/
 
 	/*TODO:  Sort this out!!!*/
-	int *tmp1 = (int *) emalloc(sizeof(int));
-    int *tmp2 = (int *) emalloc(sizeof(int));
+	unsigned char *tmp1 = (unsigned char *) emalloc(sizeof(unsigned char));
+    unsigned char *tmp2 = (unsigned char *) emalloc(sizeof(unsigned char));
 	fseek(fp,19L,SEEK_SET);
 	fread(tmp1,1,1,fp);
 	fread(tmp2,1,1,fp);
