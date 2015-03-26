@@ -126,7 +126,7 @@ void printReport(struct tm str_time, char *buffer, unsigned char *directoryFlag,
 		if (*directoryFlag) printf("D ");
 		else if (*fileFlag) printf("F ");
 
-		printf("%10s", *fileSize);
+		printf("%10d", *fileSize);
 		char file[50];
 		fileName = strtok(fileName, " ");
 		strcpy(file, fileName);
