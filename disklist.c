@@ -6,6 +6,16 @@
 #define BYTES_PER_SECTOR 512
 #define SIZE 256
 
+void *emalloc(size_t n){
+    void *p;
+    p = malloc(n);
+    if (p == NULL) {
+        fprintf(stderr, "malloc of %lu bytes failed", n);
+        exit(1);
+    }
+    return p;
+}
+
 void testAttributes(FILE *fp, int cur, int *fileFlag, int *directoryFlag, char *fileName, char *fileExtension)
 {
 	//reset flags to off
@@ -39,10 +49,10 @@ void getFileSize(FILE *fp, int cur, long *fileSize)
 {
 
 	int file_size_offset = 28;
-	int *tmp1 = malloc(sizeof(int));
-	int *tmp2 = malloc(sizeof(int));
-	int *tmp3 = malloc(sizeof(int));
-	int *tmp4 = malloc(sizeof(int));
+	int *tmp1 = (int *) emalloc(sizeof(int));
+	int *tmp2 = (int *) emalloc(sizeof(int));
+	int *tmp3 = (int *) emalloc(sizeof(int));
+	int *tmp4 = (int *) emalloc(sizeof(int));
 
 	fseek(fp, cur + file_size_offset, SEEK_SET);
 	fread(tmp1,1,1,fp);
@@ -63,8 +73,8 @@ void getFileCreationDate(FILE *fp, int cur, int *fileDate, int *year, int *month
 	
 	int file_date_offset = 16;
 	
-	int *tmp1 = malloc(sizeof(int));
-	int *tmp2 = malloc(sizeof(int));
+	int *tmp1 = (int *) emalloc(sizeof(int));
+	int *tmp2 = (int *) emalloc(sizeof(int));
 
 	fseek(fp, cur + file_date_offset, SEEK_SET);
 	fread(tmp1,1,1,fp);
@@ -89,8 +99,8 @@ void getFileCreationTime(FILE *fp, int cur, int *fileTime, int *hour, int *minut
 
 	int file_time_offset = 14;
 	
-	int *tmp1 = malloc(sizeof(int));
-	int *tmp2 = malloc(sizeof(int));
+	int *tmp1 = (int *) emalloc(sizeof(int));
+	int *tmp2 = (int *) emalloc(sizeof(int));
 
 	fseek(fp, cur + file_time_offset, SEEK_SET);
 	fread(tmp1,1,1,fp);
@@ -137,18 +147,18 @@ void parseDirectory(FILE *fp, int *fileFlag, int *directoryFlag, long *fileSize,
 	int cur = base;   // point to the first byte of the current entry
 	int offset = 32;  // Each entry has 32 bytes in root directory
 
-	int *tmp1 = malloc(sizeof(int));
+	int *tmp1 = (int *) emalloc(sizeof(int));
 
 	fseek(fp, base, SEEK_SET);
 	fread(tmp1,1,1,fp);
 	
 	//create additional pointers for time and date
-	int *year = malloc(sizeof(int));
-	int *month = malloc(sizeof(int));
-	int *day = malloc(sizeof(int));
-	int *hour = malloc(sizeof(int));
-	int *minute = malloc(sizeof(int));
-	int *second = malloc(sizeof(int));
+	int *year = (int *) emalloc(sizeof(int));
+	int *month = (int *) emalloc(sizeof(int));
+	int *day = (int *) emalloc(sizeof(int));
+	int *hour = (int *) emalloc(sizeof(int));
+	int *minute = (int *) emalloc(sizeof(int));
+	int *second = (int *) emalloc(sizeof(int));
 
 	//add time struct
 	struct tm str_time;
