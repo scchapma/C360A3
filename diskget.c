@@ -6,14 +6,8 @@
 #define BYTES_PER_SECTOR 512
 #define SIZE 256
 
-//void splitString (char **input, char **file_name, char **file_extension)
 void splitString (char **input, char **file_name, char **file_extension)
 {
-	/*
-	file_name = strsep(&input, ".");
-	file_extension = strsep(&input, " ");
-	*/
-	
 	char **ap, *argv[2];
 
 	for (ap = argv; (*ap = strsep(input, ".")) != NULL;)
@@ -67,13 +61,7 @@ void findFile (FILE *fp, char *file_name, char *file_extension, int *first_secto
 				fread(&tmp2, 1, 1, fp);  // get all 8 bits 
 				fread(&tmp3,1 ,1, fp); 				
 				*first_sector = (tmp3 << 8) + tmp2; 
-				//*first_sector += 31;
-				printf("First sector: %d\n", *first_sector);
 				break;
-			}
-			else
-			{
-				printf("Strings not equal: %s, %s, %s, %s\n", file_name, currentFileName, file_extension, currentFileExtension);
 			}
 		}
 		
@@ -137,7 +125,6 @@ int nextSector(FILE *fp, int *fat_sector)
 		printf("Bad cluster - exiting.\n");
 		return 1;
 	}
-	//else if (result & 0xFF0)
 	else if (result >= 0xFF8 && result <= 0xFFF)
 	{
 		printf("Last cluster in file - exiting.\n");
@@ -167,7 +154,6 @@ void writeFile(FILE *fp, char *diskname, char *filename, int *first_sector)
 	int j = 0;
 	int physical_sector = 0;
 	int cur = 0;		
-	int counter = 0;
 	
 	if ((fp2 = fopen(filename, "w")))
 	{	
@@ -185,13 +171,7 @@ void writeFile(FILE *fp, char *diskname, char *filename, int *first_sector)
 			fseek(fp,cur,SEEK_SET);
 			fwrite(buffer, 1, 512, fp2);
 
-			counter++;
-			//fat_sector++;
-			//fat_sector = nextSector(fp, &fat_sector);
-			//printf("fat_sector: %d\n", fat_sector);
-
 		}while (!nextSector(fp, &fat_sector));	
-		//}while(counter < 98);
 		
 		fclose(fp2);
 	}
@@ -219,10 +199,7 @@ int main(int argc, char *argv[])
 
 	if ((fp=fopen(argv[1],"r")))
 	{
-		//parseInput(fp, argv[2]);
 		splitString (&input, &file_name, &file_extension);
-		printf("file_name: %s\n", file_name);
-		printf("file_extension: %s\n", file_extension);
 		findFile (fp, file_name, file_extension, first_sector);
 		writeFile(fp, argv[1], argv[2], first_sector);
 	}
