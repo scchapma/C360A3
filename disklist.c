@@ -71,17 +71,17 @@ void getFileCreationDate(FILE *fp, int cur, int *fileDate, int *year, int *month
 	//int *tmp1 = (int *) emalloc(sizeof(int));
 	//int *tmp2 = (int *) emalloc(sizeof(int));
 
-	int *tmp1 = (int *) emalloc(sizeof(int));
-	int *tmp2 = (int *) emalloc(sizeof(int));
+	int tmp1; 
+	int tmp2; 
 
 	fseek(fp, cur + file_date_offset, SEEK_SET);
-	fread(tmp1,1,1,fp);
-	fread(tmp2,1,1,fp);
+	fread(&tmp1,1,1,fp);
+	fread(&tmp2,1,1,fp);
 
 	*fileDate = *tmp1 + ((*tmp2) << 8);
 
-	free(tmp1);
-	free(tmp2);
+	//free(tmp1);
+	//free(tmp2);
 
 	//break date down into year, month, and day
 	//year is bits 15 to 9 - use mask 0xFE00
