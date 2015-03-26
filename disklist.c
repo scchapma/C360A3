@@ -65,7 +65,7 @@ void getFileSize(FILE *fp, int cur, unsigned int *fileSize)
 void getFileCreationDate(FILE *fp, int cur, unsigned int *fileDate, unsigned int *year, unsigned int *month, unsigned int *day)
 {
 	unsigned int file_date_offset = 16;
-
+	
 	unsigned char tmp1; 
 	unsigned char tmp2;
 
@@ -84,21 +84,24 @@ void getFileCreationDate(FILE *fp, int cur, unsigned int *fileDate, unsigned int
 	*day = (*fileDate & 0x001F);
 }
 
-void getFileCreationTime(FILE *fp, int cur, int *fileTime, int *hour, int *minute, int *second)
+void getFileCreationTime(FILE *fp, int cur, unsigned int *fileTime, unsigned int *hour, unsigned int *minute, unsigned int *second)
 {
 	int file_time_offset = 14;
 	
-	int *tmp1 = (int *) emalloc(sizeof(int));
-	int *tmp2 = (int *) emalloc(sizeof(int));
+	//int *tmp1 = (int *) emalloc(sizeof(int));
+	//int *tmp2 = (int *) emalloc(sizeof(int));
+
+	unsigned char tmp1;
+	unsigned char tmp2;
 
 	fseek(fp, cur + file_time_offset, SEEK_SET);
-	fread(tmp1,1,1,fp);
-	fread(tmp2,1,1,fp);
+	fread(&tmp1,1,1,fp);
+	fread(&tmp2,1,1,fp);
 
-	*fileTime = *tmp1 + ((*tmp2) << 8);
+	*fileTime = tmp1 + ((tmp2) << 8);
 
-	free(tmp1);
-	free(tmp2);
+	//free(tmp1);
+	//free(tmp2);
 
 	//break time down into hours, minutes and seconds
 	//hour is bits 15 to 11 - use mask 0xF800
@@ -129,7 +132,7 @@ void printReport(struct tm str_time, char *buffer, unsigned char *directoryFlag,
 
 // loop through the root directory
 // Each entry has 32 bytes in root directory
-void parseDirectory(FILE *fp, unsigned char *fileFlag, unsigned char *directoryFlag, unsigned int *fileSize, char *fileName, char *fileExtension, unsigned int *fileDate, int *fileTime)
+void parseDirectory(FILE *fp, unsigned char *fileFlag, unsigned char *directoryFlag, unsigned int *fileSize, char *fileName, char *fileExtension, unsigned int *fileDate, unsigned int *fileTime)
 {
 	int base = 9728;  // the first byte of the root directory
 
@@ -148,9 +151,9 @@ void parseDirectory(FILE *fp, unsigned char *fileFlag, unsigned char *directoryF
 	unsigned int *month = (unsigned int *) emalloc(sizeof(unsigned int));
 	unsigned int *day = (unsigned int *) emalloc(sizeof(unsigned int));
 
-	int *hour = (int *) emalloc(sizeof(int));
-	int *minute = (int *) emalloc(sizeof(int));
-	int *second = (int *) emalloc(sizeof(int));
+	unsigned int *hour = (unsigned int *) emalloc(sizeof(unsigned int));
+	unsigned int *minute = (unsigned int *) emalloc(sizeof(unsigned int));
+	unsigned int *second = (unsigned int *) emalloc(sizeof(unsigned int));
 
 	//add time struct
 	struct tm str_time;
@@ -205,7 +208,7 @@ int main()
 	char *fileName = (char *) emalloc(sizeof(char)*8*8);
 	char *fileExtension = (char *) emalloc(sizeof(char)*3*8);
 	unsigned int *fileDate = (unsigned int *) emalloc(sizeof(unsigned int));
-	int *fileTime = (int *) emalloc(sizeof(int));
+	unsigned int *fileTime = (unsigned int *) emalloc(sizeof(unsigned int));
 	
 	if ((fp=fopen("disk2.IMA","r")))
 	{
