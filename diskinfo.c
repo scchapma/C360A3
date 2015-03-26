@@ -29,6 +29,7 @@ void getSize(FILE *fp, unsigned int *fileSize)
 	tmp2 = (*int) emalloc(sizeof(int));
 	*/
 
+	/*TODO:  Sort this out!!!*/
 	int *tmp1 = malloc(sizeof(int));
     int *tmp2 = malloc(sizeof(int));
 	fseek(fp,19L,SEEK_SET);
@@ -183,13 +184,13 @@ void getSectorsPerFAT(FILE *fp, unsigned int* sectors_per_FAT)
 int main()
 {
 	FILE *fp;
-	unsigned char *osname = (unsigned char*) malloc(sizeof(unsigned char)*8);
-	unsigned char *label = (unsigned char*) malloc(sizeof(unsigned char)*11*8);
-	unsigned int *fileSize = (unsigned int*) malloc(sizeof( unsigned int));
-	unsigned char *fileName = (unsigned char*) malloc(sizeof(unsigned char)*8*8);
-	unsigned int *number_files = (unsigned int*) malloc(sizeof(unsigned int));
-	unsigned int *number_FAT_copies = (unsigned int*) malloc(sizeof(unsigned int));
-	unsigned int *sectors_per_FAT = (unsigned int*) malloc(sizeof(unsigned int));
+	unsigned char *osname = (unsigned char*) emalloc(sizeof(unsigned char)*8);
+	unsigned char *label = (unsigned char*) emalloc(sizeof(unsigned char)*11*8);
+	unsigned int *fileSize = (unsigned int*) emalloc(sizeof( unsigned int));
+	unsigned char *fileName = (unsigned char*) emalloc(sizeof(unsigned char)*8*8);
+	unsigned int *number_files = (unsigned int*) emalloc(sizeof(unsigned int));
+	unsigned int *number_FAT_copies = (unsigned int*) emalloc(sizeof(unsigned int));
+	unsigned int *sectors_per_FAT = (unsigned int*) emalloc(sizeof(unsigned int));
 	unsigned int free_space;
 	
 	if ((fp=fopen("disk2.IMA","r")))
