@@ -48,11 +48,11 @@ void testAttributes(FILE *fp, int cur, unsigned char *fileFlag, unsigned char *d
 void getFileSize(FILE *fp, int cur, long *fileSize)
 {
 
-	int file_size_offset = 28;
-	int *tmp1 = (int *) emalloc(sizeof(int));
-	int *tmp2 = (int *) emalloc(sizeof(int));
-	int *tmp3 = (int *) emalloc(sizeof(int));
-	int *tmp4 = (int *) emalloc(sizeof(int));
+	unsigned int file_size_offset = 28;
+	unsigned int *tmp1 = (unsigned int *) emalloc(sizeof(unsigned int));
+	unsigned int *tmp2 = (unsigned int *) emalloc(sizeof(unsigned int));
+	unsigned int *tmp3 = (unsigned int *) emalloc(sizeof(unsigned int));
+	unsigned int *tmp4 = (unsigned int *) emalloc(sizeof(unsigned int));
 
 	fseek(fp, cur + file_size_offset, SEEK_SET);
 	fread(tmp1,1,1,fp);
