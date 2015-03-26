@@ -16,7 +16,7 @@ void *emalloc(size_t n){
     return p;
 }
 
-void testAttributes(FILE *fp, int cur, unsigned char *fileFlag, unsigned char *directoryFlag, char *fileName, unsigned char *fileExtension)
+void testAttributes(FILE *fp, int cur, unsigned char *fileFlag, unsigned char *directoryFlag, char *fileName, char *fileExtension)
 {
 	//reset flags to off
 	*fileFlag = 0;
@@ -140,7 +140,7 @@ void printReport(struct tm str_time, char *buffer, unsigned char *directoryFlag,
 
 // loop through the root directory
 // Each entry has 32 bytes in root directory
-void parseDirectory(FILE *fp, unsigned char *fileFlag, unsigned char *directoryFlag, long *fileSize, char *fileName, unsigned char *fileExtension, int *fileDate, int *fileTime)
+void parseDirectory(FILE *fp, unsigned char *fileFlag, unsigned char *directoryFlag, long *fileSize, char *fileName, char *fileExtension, int *fileDate, int *fileTime)
 {
 	int base = 9728;  // the first byte of the root directory
 
