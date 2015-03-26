@@ -110,10 +110,10 @@ unsigned int getFreeSpace(FILE* fp, unsigned int *fileSize)
 //int countRootDirFiles(FILE* fp)
 void getNumberFiles(FILE *fp, unsigned int* number_files, unsigned char* fileName)
 {
-	int base = 9728;  // the first byte of the root directory
-	int cur = base;   // point to the first byte of the current entry
-	int offset = 32;  // Each entry has 32 bytes in root directory
-	int attribute_offset = 11;
+	unsigned int base = 9728;  // the first byte of the root directory
+	unsigned int cur = base;   // point to the first byte of the current entry
+	unsigned int offset = 32;  // Each entry has 32 bytes in root directory
+	unsigned int attribute_offset = 11;
 
 	*number_files = 0;
 
@@ -163,14 +163,14 @@ void getNumberFiles(FILE *fp, unsigned int* number_files, unsigned char* fileNam
 
 void getNumberFATCopies(FILE *fp, unsigned int* number_FAT_copies)
 {
-	printf("Enter getNumberFATCopies\n");
+	//printf("Enter getNumberFATCopies\n");
 	fseek(fp,16L,SEEK_SET);
 	fread(number_FAT_copies,1,1,fp);
 }
 
 void getSectorsPerFAT(FILE *fp, unsigned int* sectors_per_FAT)
 {
-	printf("Enter getSectorsPerFAT\n");
+	//printf("Enter getSectorsPerFAT\n");
 	unsigned char *tmp1 = (unsigned char*) malloc(sizeof(unsigned char));
 	unsigned char *tmp2 = (unsigned char*) malloc(sizeof(unsigned char));
 	
@@ -196,7 +196,7 @@ int main()
 	
 	if ((fp=fopen("disk2.IMA","r")))
 	{
-		printf("Successfully open the image file.\n");
+		//printf("Successfully open the image file.\n");
 		
 		getOSName(fp,osname);
 		getLabel(fp,label);
