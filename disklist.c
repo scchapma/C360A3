@@ -63,6 +63,7 @@ void getFileSize(FILE *fp, int cur, unsigned char *fileSize)
 	printf("tmp1, tmp2, tmp3, tmp4: %d, %d, %d, %d\n", *tmp1, *tmp2, *tmp3, *tmp4);
 
 	*fileSize = *tmp1+((*tmp2)<<8) + ((*tmp3) << 16) + ((*tmp4) << 24);
+	printf("fileSize: %d\n", *fileSize);
 
 	free(tmp1);
 	free(tmp2);
