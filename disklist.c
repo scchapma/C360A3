@@ -49,29 +49,31 @@ void getFileSize(FILE *fp, int cur, unsigned char *fileSize)
 {
 
 	unsigned int file_size_offset = 28;
-	unsigned char *tmp1 = (unsigned char *) emalloc(sizeof(unsigned char));
-	unsigned char *tmp2 = (unsigned char *) emalloc(sizeof(unsigned char));
-	unsigned char *tmp3 = (unsigned char *) emalloc(sizeof(unsigned char));
-	unsigned char *tmp4 = (unsigned char *) emalloc(sizeof(unsigned char));
+	unsigned char tmp1; 
+	unsigned char tmp2; 
+	unsigned char tmp3; 
+	unsigned char tmp4; 
 
 	fseek(fp, cur + file_size_offset, SEEK_SET);
-	fread(tmp1,1,1,fp);
-	fread(tmp2,1,1,fp);
-	fread(tmp3,1,1,fp);
-	fread(tmp4,1,1,fp);
+	fread(&tmp1,1,1,fp);
+	fread(&tmp2,1,1,fp);
+	fread(&tmp3,1,1,fp);
+	fread(&tmp4,1,1,fp);
 
-	printf("Before: tmp1, tmp2, tmp3, tmp4: %d, %d, %d, %d\n", *tmp1, *tmp2, *tmp3, *tmp4);
+	printf("Before: tmp1, tmp2, tmp3, tmp4: %02x, %02x, %02x, %02x\n", tmp1, tmp2, tmp3, tmp4);
 
 	*fileSize = *tmp1+((*tmp2)<<8) + ((*tmp3) << 16) + ((*tmp4) << 24);
 
-	printf("After: tmp1, tmp2, tmp3, tmp4: %d, %d, %d, %d\n", *tmp1, *tmp2, *tmp3, *tmp4);
+	printf("After: tmp1, tmp2, tmp3, tmp4: %02x, %02x, %02x, %02x\n", tmp1, tmp2, tmp3, tmp4);
 
 	printf("fileSize: %d\n", *fileSize);
 
+	/*
 	free(tmp1);
 	free(tmp2);
 	free(tmp3);
 	free(tmp4);
+	*/
 }
 
 void getFileCreationDate(FILE *fp, int cur, int *fileDate, int *year, int *month, int *day)
