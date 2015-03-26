@@ -22,7 +22,7 @@ void testAttributes(FILE *fp, int cur, unsigned char *fileFlag, unsigned char *d
 	*fileFlag = 0;
 	*directoryFlag = 0;
 
-	int attribute_offset = 11;
+	unsigned int attribute_offset = 11;
 	unsigned char tmp;
 
 	fseek(fp, cur + attribute_offset, SEEK_SET);
@@ -60,37 +60,28 @@ void getFileSize(FILE *fp, int cur, unsigned int *fileSize)
 	fread(&tmp3,1,1,fp);
 	fread(&tmp4,1,1,fp);
 
-	//printf("Before: tmp1, tmp2, tmp3, tmp4: %02x, %02x, %02x, %02x\n", tmp1, tmp2, tmp3, tmp4);
-
 	*fileSize = tmp1+((tmp2)<<8) + ((tmp3) << 16) + ((tmp4) << 24);
-
-	//printf("After: tmp1, tmp2, tmp3, tmp4: %02x, %02x, %02x, %02x\n", tmp1, tmp2, tmp3, tmp4);
-	//printf("fileSize: %d\n", *fileSize);
-
-	/*
-	free(tmp1);
-	free(tmp2);
-	free(tmp3);
-	free(tmp4);
-	*/
 }
 
-void getFileCreationDate(FILE *fp, int cur, int *fileDate, int *year, int *month, int *day)
+void getFileCreationDate(FILE *fp, int cur, unsigned int *fileDate, unsigned int *year, unsigned int *month, unsigned int *day)
 {
 	
 	int file_date_offset = 16;
 	
-	int *tmp1 = (int *) emalloc(sizeof(int));
-	int *tmp2 = (int *) emalloc(sizeof(int));
+	//int *tmp1 = (int *) emalloc(sizeof(int));
+	//int *tmp2 = (int *) emalloc(sizeof(int));
+
+	int tmp1;
+	int tmp2;
 
 	fseek(fp, cur + file_date_offset, SEEK_SET);
-	fread(tmp1,1,1,fp);
-	fread(tmp2,1,1,fp);
+	fread(&tmp1,1,1,fp);
+	fread(&tmp2,1,1,fp);
 
-	*fileDate = *tmp1 + ((*tmp2) << 8);
+	*fileDate = tmp1 + ((tmp2) << 8);
 
-	free(tmp1);
-	free(tmp2);
+	//free(tmp1);
+	//free(tmp2);
 
 	//break date down into year, month, and day
 	//year is bits 15 to 9 - use mask 0xFE00
@@ -147,7 +138,7 @@ void printReport(struct tm str_time, char *buffer, unsigned char *directoryFlag,
 
 // loop through the root directory
 // Each entry has 32 bytes in root directory
-void parseDirectory(FILE *fp, unsigned char *fileFlag, unsigned char *directoryFlag, unsigned int *fileSize, char *fileName, char *fileExtension, int *fileDate, int *fileTime)
+void parseDirectory(FILE *fp, unsigned char *fileFlag, unsigned char *directoryFlag, unsigned int *fileSize, char *fileName, char *fileExtension, unsigned int *fileDate, int *fileTime)
 {
 	int base = 9728;  // the first byte of the root directory
 
@@ -160,9 +151,18 @@ void parseDirectory(FILE *fp, unsigned char *fileFlag, unsigned char *directoryF
 	fread(tmp1,1,1,fp);
 	
 	//create additional pointers for time and date
+	/*
 	int *year = (int *) emalloc(sizeof(int));
 	int *month = (int *) emalloc(sizeof(int));
 	int *day = (int *) emalloc(sizeof(int));
+	*/
+
+	unsigned int *year;
+	unsigned int *month;
+	unsigned int *day; 
+
+
+
 	int *hour = (int *) emalloc(sizeof(int));
 	int *minute = (int *) emalloc(sizeof(int));
 	int *second = (int *) emalloc(sizeof(int));
@@ -202,9 +202,9 @@ void parseDirectory(FILE *fp, unsigned char *fileFlag, unsigned char *directoryF
 		fread(tmp1,1,1,fp);
 	}
 	
-	free(year);
-	free(month);
-	free(day);
+	//free(year);
+	//free(month);
+	//free(day);
 	free(hour);
 	free(minute);
 	free(second);
@@ -219,7 +219,7 @@ int main()
 	unsigned int *fileSize = (unsigned int *) emalloc(sizeof(unsigned int));
 	char *fileName = (char *) emalloc(sizeof(char)*8*8);
 	char *fileExtension = (char *) emalloc(sizeof(char)*3*8);
-	int *fileDate = (int *) emalloc(sizeof(int));
+	unsigned int *fileDate = (unsigned int *) emalloc(sizeof(unsigned int));
 	int *fileTime = (int *) emalloc(sizeof(int));
 	
 	if ((fp=fopen("disk2.IMA","r")))
@@ -239,6 +239,7 @@ int main()
 	free(fileExtension);
 	free(fileDate);
 	free(fileTime);	
+	
 	fclose(fp);
 	
 	return 0;
