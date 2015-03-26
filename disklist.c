@@ -16,7 +16,7 @@ void *emalloc(size_t n){
     return p;
 }
 
-void testAttributes(FILE *fp, int cur, unsigned char *fileFlag, unsigned char *directoryFlag, unsigned char *fileName, unsigned char *fileExtension)
+void testAttributes(FILE *fp, int cur, unsigned char *fileFlag, unsigned char *directoryFlag, char *fileName, unsigned char *fileExtension)
 {
 	//reset flags to off
 	*fileFlag = 0;
@@ -120,14 +120,14 @@ void getFileCreationTime(FILE *fp, int cur, int *fileTime, int *hour, int *minut
 	*second = (*fileTime & 0x001F);
 }
 
-void printReport(struct tm str_time, unsigned char *buffer, unsigned char *directoryFlag, unsigned char *fileFlag, long *fileSize, unsigned char *fileName, unsigned char *fileExtension)
+void printReport(struct tm str_time, char *buffer, unsigned char *directoryFlag, unsigned char *fileFlag, long *fileSize, char *fileName, char *fileExtension)
 {
 	if(*directoryFlag || *fileFlag){
 		if (*directoryFlag) printf("D ");
 		else if (*fileFlag) printf("F ");
 
 		printf("%10ld", *fileSize);
-		unsigned char file[50];
+		char file[50];
 		fileName = strtok(fileName, " ");
 		strcpy(file, fileName);
 		strcat(file, ".");
@@ -140,7 +140,7 @@ void printReport(struct tm str_time, unsigned char *buffer, unsigned char *direc
 
 // loop through the root directory
 // Each entry has 32 bytes in root directory
-void parseDirectory(FILE *fp, unsigned char *fileFlag, unsigned char *directoryFlag, long *fileSize, unsigned char *fileName, unsigned char *fileExtension, int *fileDate, int *fileTime)
+void parseDirectory(FILE *fp, unsigned char *fileFlag, unsigned char *directoryFlag, long *fileSize, char *fileName, unsigned char *fileExtension, int *fileDate, int *fileTime)
 {
 	int base = 9728;  // the first byte of the root directory
 
@@ -162,7 +162,7 @@ void parseDirectory(FILE *fp, unsigned char *fileFlag, unsigned char *directoryF
 
 	//add time struct
 	struct tm str_time;
-	unsigned char buffer[SIZE];
+	char buffer[SIZE];
 
 	//traverse each item in root directory
 	while(*tmp1 != 0x00)  
@@ -210,8 +210,8 @@ int main()
 	unsigned char *fileFlag = (unsigned char *) emalloc(sizeof(unsigned char));
 	unsigned char *directoryFlag = (unsigned char *) emalloc(sizeof(unsigned char));
 	long *fileSize = (long *) emalloc(sizeof(long));
-	unsigned char *fileName = (unsigned char *) emalloc(sizeof(unsigned char)*8*8);
-	unsigned char *fileExtension = (unsigned char *) emalloc(sizeof(unsigned char)*3*8);
+	char *fileName = (char *) emalloc(sizeof(char)*8*8);
+	char *fileExtension = (char *) emalloc(sizeof(char)*3*8);
 	int *fileDate = (int *) emalloc(sizeof(int));
 	int *fileTime = (int *) emalloc(sizeof(int));
 	
