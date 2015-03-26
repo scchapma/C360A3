@@ -17,6 +17,9 @@ void splitString (char **input, char **file_name, char **file_extension)
 	
 	*file_name = argv[0];
 	*file_extension = argv[1];
+	//TODO:  
+	//Don't get rid of this print statement!
+	//Related to problems with adding extensions to file?
 	printf("file name and extension: %s.%s\n", argv[0], argv[1]);
 }
 
@@ -78,15 +81,13 @@ void findFile (FILE *fp, char *file_name, char *file_extension, int *first_secto
 
 int nextSector(FILE *fp, int *fat_sector)
 {
-	int n = 2;  // logical number of the first sector in Data Area
+	int n = *fat_sector;  // logical number of the first sector in Data Area
 	int base = 512; // the first byte of the FAT table 
 
 	int tmp1 = 0;
 	int tmp2 = 0;
 
 	int result = 0;
-
-	n = *fat_sector;
 
 	// if the logical sector number is even
 	if (n % 2 == 0)
@@ -112,7 +113,6 @@ int nextSector(FILE *fp, int *fat_sector)
 		result = (tmp2 << 4) + (tmp1 >> 4); 
 	}
 
-	printf("result: %d\n", result);
 	*fat_sector = result;
 	
 	if (result >= 0xFF0 && result <= 0xFF6)
@@ -128,7 +128,6 @@ int nextSector(FILE *fp, int *fat_sector)
 	else if (result >= 0xFF8 && result <= 0xFFF)
 	{
 		printf("Last cluster in file - exiting.\n");
-		printf("result: %d\n", result);
 		return 1;
 	}
 	else if (result == 0x00) 
@@ -141,7 +140,6 @@ int nextSector(FILE *fp, int *fat_sector)
 		return 0;
 	}	
 }
-
 
 void writeFile(FILE *fp, char *diskname, char *filename, int *first_sector)
 {
@@ -186,8 +184,9 @@ void writeFile(FILE *fp, char *diskname, char *filename, int *first_sector)
 int main(int argc, char *argv[])
 {
 	FILE *fp;
-	char *file_name = malloc(sizeof(char)*8);
-	char *file_extension = malloc(sizeof(char)*3);
+	char *file_name; 
+	char *file_extension; 
+	
 	int *first_sector = malloc(sizeof(char)*2);
 
 	if ( argc != 3 ) {
@@ -208,6 +207,8 @@ int main(int argc, char *argv[])
 		printf("Fail to open the image file.\n");
 	}
     			
+	free(first_sector);
+
 	return 0;
 }
 
