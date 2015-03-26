@@ -88,41 +88,74 @@ void findFile (FILE *fp, char *file_name, char *file_extension, int *first_secto
 	free(currentFileExtension);
 }
 
-/*
-void getNextSector()
+int nextSector(FILE *fp, int *fat_sector)
 {
-// if the logical sector number is even
+	int n = 2;  // logical number of the first sector in Data Area
+	int base = 512; // the first byte of the FAT table 
+
 	int tmp1 = 0;
 	int tmp2 = 0;
 
-	int counter = 0;
 	int result = 0;
 
+	n = *fat_sector;
 
-		if (n % 2 == 0)
-		{
-			fseek(fp, base + 3*n/2, SEEK_SET);
-			fread(&tmp1, 1, 1, fp);  // get all 8 bits 
-			fread(&tmp2,1 ,1, fp);
-			tmp2 = tmp2 & 0x0F;   // use mask to get the low 4 bits 
+	// if the logical sector number is even
+	if (n % 2 == 0)
+	{
+		fseek(fp, base + 3*n/2, SEEK_SET);
+		fread(&tmp1, 1, 1, fp);  // get all 8 bits 
+		fread(&tmp2,1 ,1, fp);
+		tmp2 = tmp2 & 0x0F;   // use mask to get the low 4 bits 
 
-			// Then apply "Little Endian": (4 bits)**** + (8 bits)********
-			result = (tmp2 << 8) + tmp1;  
-		}
+		// Then apply "Little Endian": (4 bits)**** + (8 bits)********
+		result = (tmp2 << 8) + tmp1;  
+	}
 
-		// if the logical sector number is odd
-		else
-		{
-			fseek(fp, base + 3*n/2, SEEK_SET);
-			fread(&tmp1, 1, 1, fp);  // get all 8 bits 
-			fread(&tmp2,1 ,1, fp);
-			tmp1 = tmp1 & 0xF0;   // use mask to get the low 4 bits 
+	// if the logical sector number is odd
+	else
+	{
+		fseek(fp, base + 3*n/2, SEEK_SET);
+		fread(&tmp1, 1, 1, fp);  // get all 8 bits 
+		fread(&tmp2,1 ,1, fp);
+		tmp1 = tmp1 & 0xF0;   // use mask to get the low 4 bits 
 
-			// Then apply "Little Endian": (4 bits)**** + (8 bits)********
-			result = (tmp2 << 4) + (tmp1 >> 4); 
-		}	
+		// Then apply "Little Endian": (4 bits)**** + (8 bits)********
+		result = (tmp2 << 4) + (tmp1 >> 4); 
+	}
+
+	printf("result: %d\n", result);
+	*fat_sector = result;
+	
+	if (result >= 0xFF0 && result <= 0xFF6)
+	{
+		printf("Reserved cluster - exiting.\n");
+		return 1;
+	}
+	else if (result == 0xFF7)
+	{
+		printf("Bad cluster - exiting.\n");
+		return 1;
+	}
+	//else if (result & 0xFF0)
+	else if (result >= 0xFF8 && result <= 0xFFF)
+	{
+		printf("Last cluster in file - exiting.\n");
+		printf("result: %d\n", result);
+		return 1;
+	}
+	else if (result == 0x00) 
+	{
+		printf("Unused cluster encountered - exiting.\n");
+		return 1;
+	}
+	else
+	{
+		//return result;
+		return 0;
+	}	
 }
-*/
+
 
 void writeFile(FILE *fp, char *diskname, char *filename, int *first_sector)
 {
@@ -156,11 +189,12 @@ void writeFile(FILE *fp, char *diskname, char *filename, int *first_sector)
 			//cur += 512;
 
 			counter++;
-			fat_sector++;
-			//fat_sector = getNextSector(&fat_sector);
+			//fat_sector++;
+			//fat_sector = nextSector(fp, &fat_sector);
+			//printf("fat_sector: %d\n", fat_sector);
 
-		//}while(next_sector);
-		}while(counter < 98);
+		}while (!nextSector(fp, &fat_sector));	
+		//}while(counter < 98);
 		
 		fclose(fp2);
 	}
