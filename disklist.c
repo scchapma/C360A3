@@ -78,7 +78,7 @@ void getFileCreationDate(FILE *fp, int cur, int *fileDate, int *year, int *month
 	fread(&tmp1,1,1,fp);
 	fread(&tmp2,1,1,fp);
 
-	*fileDate = *tmp1 + ((*tmp2) << 8);
+	*fileDate = tmp1 + ((tmp2) << 8);
 
 	//free(tmp1);
 	//free(tmp2);
