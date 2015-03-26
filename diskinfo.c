@@ -13,7 +13,7 @@ void *emalloc(size_t n){
     return p;
 }
 
-void getOSName(FILE *fp, char *osname)
+void getOSName(FILE *fp, unsigned char *osname)
 {
 	//printf("Enter getOSName\n");
 	fseek(fp,3L,SEEK_SET);
@@ -22,7 +22,7 @@ void getOSName(FILE *fp, char *osname)
 
 }
 
-void getSize(FILE *fp, int *fileSize)
+void getSize(FILE *fp, unsigned int *fileSize)
 {
 	printf("Enter getSize\n");
 	
@@ -44,7 +44,7 @@ void getSize(FILE *fp, int *fileSize)
 	free(tmp2);
 }
 
-void getLabel(FILE *fp, char *label)
+void getLabel(FILE *fp, unsigned char *label)
 {
 	printf("Enter getLabel\n");
 	fseek(fp,43L,SEEK_SET);
@@ -52,21 +52,21 @@ void getLabel(FILE *fp, char *label)
 	//printf("Exit getLabel\n");
 }
 
-int getFreeSpace(FILE* fp, int *fileSize)
+unsigned int getFreeSpace(FILE* fp, unsigned int *fileSize)
 {
 	printf("Enter getFreeSpace\n");
-	int n = 2;  // logical number of the first sector in Data Area
-	int base = 512; // the first byte of the FAT table 
+	unsigned int n = 2;  // logical number of the first sector in Data Area
+	unsigned int base = 512; // the first byte of the FAT table 
 
-	int tmp1 = 0;
-	int tmp2 = 0;
+	unsigned int tmp1 = 0;
+	unsigned int tmp2 = 0;
 
-	int counter = 0;
-	int result = 0;
+	unsigned int counter = 0;
+	unsigned int result = 0;
 
-	int free_space = 0;
+	unsigned int free_space = 0;
 
-	int numSectors = *fileSize;
+	unsigned int numSectors = *fileSize;
 
 	//TODO:  calculate numSector-1-33+2 outside for loop
 	
@@ -116,7 +116,7 @@ int getFreeSpace(FILE* fp, int *fileSize)
 // loop through the root directory
 // Each entry has 32 bytes in root directory
 //int countRootDirFiles(FILE* fp)
-void getNumberFiles(FILE *fp, int* number_files, char* fileName)
+void getNumberFiles(FILE *fp, unsigned int* number_files, unsigned char* fileName)
 {
 	printf("Enter getNumberFiles\n");
 
@@ -179,14 +179,14 @@ void getNumberFiles(FILE *fp, int* number_files, char* fileName)
 	printf("Exit getNumberFiles\n");
 }
 
-void getNumberFATCopies(FILE *fp, int* number_FAT_copies)
+void getNumberFATCopies(FILE *fp, unsigned int* number_FAT_copies)
 {
 	printf("Enter getNumberFATCopies\n");
 	fseek(fp,16L,SEEK_SET);
 	fread(number_FAT_copies,1,1,fp);
 }
 
-void getSectorsPerFAT(FILE *fp, int* sectors_per_FAT)
+void getSectorsPerFAT(FILE *fp, unsigned int* sectors_per_FAT)
 {
 	printf("Enter getSectorsPerFAT\n");
 	unsigned char *tmp1 = (unsigned char*) malloc(sizeof(unsigned char));
@@ -210,7 +210,7 @@ int main()
 	unsigned int *number_files = (unsigned int*) malloc(sizeof(unsigned int));
 	unsigned int *number_FAT_copies = (unsigned int*) malloc(sizeof(unsigned int));
 	unsigned int *sectors_per_FAT = (unsigned int*) malloc(sizeof(unsigned int));
-	int free_space;
+	unsigned int free_space;
 	
 	if ((fp=fopen("disk2.IMA","r")))
 	{
