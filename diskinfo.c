@@ -203,13 +203,13 @@ void getSectorsPerFAT(FILE *fp, int* sectors_per_FAT)
 int main()
 {
 	FILE *fp;
-	char *osname = malloc(sizeof(char)*8);
-	char *label = malloc(sizeof(char)*11*8);
-	int *fileSize = malloc(sizeof(int));
-	char *fileName = malloc(sizeof(char)*8*8);
-	int *number_files = malloc(sizeof(int));
-	int *number_FAT_copies = malloc(sizeof(int));
-	int *sectors_per_FAT = malloc(sizeof(int));
+	unsigned char *osname = (unsigned char*) malloc(sizeof(unsigned char)*8);
+	unsigned char *label = (unsigned char*) malloc(sizeof(unsigned char)*11*8);
+	unsigned int *fileSize = (unsigned int*) malloc(sizeof( unsigned int));
+	unsigned char *fileName = (unsigned char*) malloc(sizeof(unsigned char)*8*8);
+	unsigned int *number_files = (unsigned int*) malloc(sizeof(unsigned int));
+	unsigned int *number_FAT_copies = (unsigned int*) malloc(sizeof(unsigned int));
+	unsigned int *sectors_per_FAT = (unsigned int*) malloc(sizeof(unsigned int));
 	int free_space;
 	
 	if ((fp=fopen("disk2.IMA","r")))
