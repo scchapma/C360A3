@@ -157,9 +157,9 @@ void parseDirectory(FILE *fp, unsigned char *fileFlag, unsigned char *directoryF
 	int *day = (int *) emalloc(sizeof(int));
 	*/
 
-	unsigned int *year;
-	unsigned int *month;
-	unsigned int *day; 
+	unsigned int *year = NULL;
+	unsigned int *month = NULL;
+	unsigned int *day = NULL; 
 
 
 
