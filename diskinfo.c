@@ -15,16 +15,12 @@ void *emalloc(size_t n){
 
 void getOSName(FILE *fp, unsigned char *osname)
 {
-	//printf("Enter getOSName\n");
 	fseek(fp,3L,SEEK_SET);
 	fread(osname,1,8,fp);
-	//printf("Exit getOSName\n");
-
 }
 
 void getSize(FILE *fp, unsigned int *fileSize)
 {
-	//printf("Enter getSize\n");
 	
 	/*
 	int *tmp1;
@@ -46,15 +42,12 @@ void getSize(FILE *fp, unsigned int *fileSize)
 
 void getLabel(FILE *fp, unsigned char *label)
 {
-	//printf("Enter getLabel\n");
 	fseek(fp,43L,SEEK_SET);
 	fread(label,11,8,fp);
-	//printf("Exit getLabel\n");
 }
 
 unsigned int getFreeSpace(FILE* fp, unsigned int *fileSize)
 {
-	printf("Enter getFreeSpace\n");
 	unsigned int n = 2;  // logical number of the first sector in Data Area
 	unsigned int base = 512; // the first byte of the FAT table 
 
@@ -117,7 +110,7 @@ unsigned int getFreeSpace(FILE* fp, unsigned int *fileSize)
 //int countRootDirFiles(FILE* fp)
 void getNumberFiles(FILE *fp, unsigned int* number_files, unsigned char* fileName)
 {
-	printf("Enter getNumberFiles\n");
+	//printf("Enter getNumberFiles\n");
 
 	int base = 9728;  // the first byte of the root directory
 	int cur = base;   // point to the first byte of the current entry
@@ -137,12 +130,12 @@ void getNumberFiles(FILE *fp, unsigned int* number_files, unsigned char* fileNam
 	/* Why 0x00 here? 0x00 means this entry and all remaining entries are free */
 	while(*tmp1 != 0x00)  
 	{
-		printf("Enter while loop\n");
+		//printf("Enter while loop\n");
 		// Search for files
 		// 0xE5 indicates that the directory entry is free (i.e., currently unused) 
 		if (*tmp1 != 0xE5)
 		{
-			printf("Enter first if loop\n");
+			//printf("Enter first if loop\n");
 			/* Locate the byte for the current entry's attribute */
 			fseek(fp, cur + attribute_offset, SEEK_SET);
 			fread(tmp2,1,1,fp);
@@ -153,13 +146,13 @@ void getNumberFiles(FILE *fp, unsigned int* number_files, unsigned char* fileNam
 			/* mask for subdirectory is 0x10, mask for label is 0x08 */			
 			if((*tmp2 != 0x0F) && !(*tmp2 & 0x10) && !(*tmp2 & 0x08))
 			{
-				printf("Enter if loop #2\n");
+				//printf("Enter if loop #2\n");
 				(*number_files)++;
 			}	
 			/* If item is label, set fileName to label */
 			if((*tmp2 != 0x0F) && (*tmp2 & 0x08))
 			{
-				printf("Enter if loop #2\n");
+				//printf("Enter if loop #2\n");
 				fseek(fp, cur, SEEK_SET);	
 				fread(fileName, 1, 8, fp);
 			}
@@ -169,13 +162,13 @@ void getNumberFiles(FILE *fp, unsigned int* number_files, unsigned char* fileNam
 		cur = cur + offset;
 		fseek(fp, cur, SEEK_SET);
 		fread(tmp1,1,1,fp);
-		printf("tmp1: %s\n", tmp1);
-		printf("Exit while loop #2\n");
+		//printf("tmp1: %s\n", tmp1);
+		//printf("Exit while loop #2\n");
 	}
 
 	free(tmp1);
 	free(tmp2);
-	printf("Exit getNumberFiles\n");
+	//printf("Exit getNumberFiles\n");
 }
 
 void getNumberFATCopies(FILE *fp, unsigned int* number_FAT_copies)
