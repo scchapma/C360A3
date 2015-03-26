@@ -3,9 +3,19 @@
 
 #define BYTES_PER_SECTOR 512
 
+void *emalloc(size_t n){
+    void *p;
+    p = malloc(n);
+    if (p == NULL) {
+        fprintf(stderr, "malloc of %lu bytes failed", n);
+        exit(1);
+    }
+    return p;
+}
+
 void getOSName(FILE *fp, char *osname)
 {
-	printf("Enter getOSName\n");
+	//printf("Enter getOSName\n");
 	fseek(fp,3L,SEEK_SET);
 	fread(osname,1,8,fp);
 	//printf("Exit getOSName\n");
@@ -15,9 +25,16 @@ void getOSName(FILE *fp, char *osname)
 void getSize(FILE *fp, int *fileSize)
 {
 	printf("Enter getSize\n");
-	int *tmp1 = malloc(sizeof(int));
-	int *tmp2 = malloc(sizeof(int));
 	
+	/*
+	int *tmp1;
+	int *tmp2;
+	tmp1 = (*int) emalloc(sizeof(int));
+	tmp2 = (*int) emalloc(sizeof(int));
+	*/
+
+	int *tmp1 = malloc(sizeof(int));
+        int *tmp2 = malloc(sizeof(int));
 	fseek(fp,19L,SEEK_SET);
 	fread(tmp1,1,1,fp);
 	fread(tmp2,1,1,fp);
@@ -55,7 +72,7 @@ int getFreeSpace(FILE* fp, int *fileSize)
 	
 	// The logical number for all the sectors in Data Area is from 2 to 2848
 	// numSectors = 2880 (or could be derived from getTotalSize() in mmap.c)
-       for (n = 2; n <= (numSectors-1-33+2); n++) 
+        for (n = 2; n <= (numSectors-1-33+2); n++) 
 	{
 		// given logical no. of sector in data area
 		// where is the corresponding entry in FAT table ?
