@@ -30,8 +30,8 @@ void getSize(FILE *fp, unsigned int *fileSize)
 	*/
 
 	/*TODO:  Sort this out!!!*/
-	int *tmp1 = malloc(sizeof(int));
-    int *tmp2 = malloc(sizeof(int));
+	int *tmp1 = emalloc(sizeof(int));
+    int *tmp2 = emalloc(sizeof(int));
 	fseek(fp,19L,SEEK_SET);
 	fread(tmp1,1,1,fp);
 	fread(tmp2,1,1,fp);
@@ -119,8 +119,8 @@ void getNumberFiles(FILE *fp, unsigned int* number_files, unsigned char* fileNam
 	*number_files = 0;
 
 	//int *tmp1 = malloc(sizeof(int));
-	unsigned char *tmp1 = (unsigned char*) malloc(sizeof(unsigned char));
-	unsigned char *tmp2 = (unsigned char*) malloc(sizeof(unsigned char));
+	unsigned char *tmp1 = (unsigned char*) emalloc(sizeof(unsigned char));
+	unsigned char *tmp2 = (unsigned char*) emalloc(sizeof(unsigned char));
 
 	fseek(fp, base, SEEK_SET);	
 	fread(tmp1,1,1,fp);
@@ -170,8 +170,8 @@ void getNumberFATCopies(FILE *fp, unsigned int* number_FAT_copies)
 
 void getSectorsPerFAT(FILE *fp, unsigned int* sectors_per_FAT)
 {
-	unsigned char *tmp1 = (unsigned char*) malloc(sizeof(unsigned char));
-	unsigned char *tmp2 = (unsigned char*) malloc(sizeof(unsigned char));
+	unsigned char *tmp1 = (unsigned char*) emalloc(sizeof(unsigned char));
+	unsigned char *tmp2 = (unsigned char*) emalloc(sizeof(unsigned char));
 	
 	fseek(fp,22L,SEEK_SET);
 	fread(tmp1,1,1,fp);
