@@ -24,7 +24,7 @@ void getOSName(FILE *fp, unsigned char *osname)
 
 void getSize(FILE *fp, unsigned int *fileSize)
 {
-	printf("Enter getSize\n");
+	//printf("Enter getSize\n");
 	
 	/*
 	int *tmp1;
@@ -46,7 +46,7 @@ void getSize(FILE *fp, unsigned int *fileSize)
 
 void getLabel(FILE *fp, unsigned char *label)
 {
-	printf("Enter getLabel\n");
+	//printf("Enter getLabel\n");
 	fseek(fp,43L,SEEK_SET);
 	fread(label,11,8,fp);
 	//printf("Exit getLabel\n");
@@ -58,12 +58,11 @@ unsigned int getFreeSpace(FILE* fp, unsigned int *fileSize)
 	unsigned int n = 2;  // logical number of the first sector in Data Area
 	unsigned int base = 512; // the first byte of the FAT table 
 
-	unsigned int tmp1 = 0;
-	unsigned int tmp2 = 0;
+	unsigned char tmp1 = 0;
+	unsigned char tmp2 = 0;
 
 	unsigned int counter = 0;
 	unsigned int result = 0;
-
 	unsigned int free_space = 0;
 
 	unsigned int numSectors = *fileSize;
