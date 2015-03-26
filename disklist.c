@@ -45,7 +45,7 @@ void testAttributes(FILE *fp, int cur, unsigned char *fileFlag, unsigned char *d
 	}
 }
 
-void getFileSize(FILE *fp, int cur, long *fileSize)
+void getFileSize(FILE *fp, int cur, unsigned char *fileSize)
 {
 
 	unsigned int file_size_offset = 28;
@@ -120,13 +120,13 @@ void getFileCreationTime(FILE *fp, int cur, int *fileTime, int *hour, int *minut
 	*second = (*fileTime & 0x001F);
 }
 
-void printReport(struct tm str_time, char *buffer, unsigned char *directoryFlag, unsigned char *fileFlag, long *fileSize, char *fileName, char *fileExtension)
+void printReport(struct tm str_time, char *buffer, unsigned char *directoryFlag, unsigned char *fileFlag, unsigned char *fileSize, char *fileName, char *fileExtension)
 {
 	if(*directoryFlag || *fileFlag){
 		if (*directoryFlag) printf("D ");
 		else if (*fileFlag) printf("F ");
 
-		printf("%10ld", *fileSize);
+		printf("%10s", *fileSize);
 		char file[50];
 		fileName = strtok(fileName, " ");
 		strcpy(file, fileName);
@@ -140,11 +140,11 @@ void printReport(struct tm str_time, char *buffer, unsigned char *directoryFlag,
 
 // loop through the root directory
 // Each entry has 32 bytes in root directory
-void parseDirectory(FILE *fp, unsigned char *fileFlag, unsigned char *directoryFlag, long *fileSize, char *fileName, char *fileExtension, int *fileDate, int *fileTime)
+void parseDirectory(FILE *fp, unsigned char *fileFlag, unsigned char *directoryFlag, unsigned char *fileSize, char *fileName, char *fileExtension, int *fileDate, int *fileTime)
 {
 	int base = 9728;  // the first byte of the root directory
 
-	int cur = base;   // point to the first byte of the current entry
+	unsigned int cur = base;   // point to the first byte of the current entry
 	int offset = 32;  // Each entry has 32 bytes in root directory
 
 	int *tmp1 = (int *) emalloc(sizeof(int));
@@ -209,7 +209,8 @@ int main()
 	FILE *fp;
 	unsigned char *fileFlag = (unsigned char *) emalloc(sizeof(unsigned char));
 	unsigned char *directoryFlag = (unsigned char *) emalloc(sizeof(unsigned char));
-	long *fileSize = (long *) emalloc(sizeof(long));
+	//long *fileSize = (long *) emalloc(sizeof(long));
+	unsigned char *fileSize = (unsigned char *) emalloc(sizeof(unsigned char));
 	char *fileName = (char *) emalloc(sizeof(char)*8*8);
 	char *fileExtension = (char *) emalloc(sizeof(char)*3*8);
 	int *fileDate = (int *) emalloc(sizeof(int));
