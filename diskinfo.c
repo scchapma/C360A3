@@ -33,8 +33,8 @@ void getSize(FILE *fp, int *fileSize)
 	tmp2 = (*int) emalloc(sizeof(int));
 	*/
 
-	int *tmp1 = (*int) malloc(sizeof(int));
-    int *tmp2 = (*int) malloc(sizeof(int));
+	int *tmp1 = malloc(sizeof(int));
+    int *tmp2 = malloc(sizeof(int));
 	fseek(fp,19L,SEEK_SET);
 	fread(tmp1,1,1,fp);
 	fread(tmp2,1,1,fp);
