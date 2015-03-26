@@ -21,15 +21,6 @@ void getOSName(FILE *fp, unsigned char *osname)
 
 void getSize(FILE *fp, unsigned int *fileSize)
 {
-	
-	/*
-	int *tmp1;
-	int *tmp2;
-	tmp1 = (*int) emalloc(sizeof(int));
-	tmp2 = (*int) emalloc(sizeof(int));
-	*/
-
-	/*TODO:  Sort this out!!!*/
 	unsigned char *tmp1 = (unsigned char *) emalloc(sizeof(unsigned char));
     unsigned char *tmp2 = (unsigned char *) emalloc(sizeof(unsigned char));
 	fseek(fp,19L,SEEK_SET);
@@ -62,10 +53,12 @@ unsigned int getFreeSpace(FILE* fp, unsigned int *fileSize)
 	unsigned int numSectors = *fileSize;
 
 	//TODO:  calculate numSector-1-33+2 outside for loop
+	unsigned int dataSectors = (numSectors-1-33+2);
 	
 	// The logical number for all the sectors in Data Area is from 2 to 2848
 	// numSectors = 2880 (or could be derived from getTotalSize() in mmap.c)
-        for (n = 2; n <= (numSectors-1-33+2); n++) 
+    //for (n = 2; n <= (numSectors-1-33+2); n++)
+    for (n = 2; n <= dataSectors; n++) 
 	{
 		// given logical no. of sector in data area
 		// where is the corresponding entry in FAT table ?
