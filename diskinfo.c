@@ -24,7 +24,7 @@ void getOSName(FILE *fp, char *osname)
 
 void getSize(FILE *fp, int *fileSize)
 {
-	printf("Enter getSize\n");
+	//printf("Enter getSize\n");
 	
 	/*
 	int *tmp1;
