@@ -60,14 +60,12 @@ void getFileSize(FILE *fp, int cur, unsigned int *fileSize)
 	fread(&tmp3,1,1,fp);
 	fread(&tmp4,1,1,fp);
 
-	printf("Before: tmp1, tmp2, tmp3, tmp4: %02x, %02x, %02x, %02x\n", tmp1, tmp2, tmp3, tmp4);
+	//printf("Before: tmp1, tmp2, tmp3, tmp4: %02x, %02x, %02x, %02x\n", tmp1, tmp2, tmp3, tmp4);
 
-	//*fileSize = *tmp1+((*tmp2)<<8) + ((*tmp3) << 16) + ((*tmp4) << 24);
 	*fileSize = tmp1+((tmp2)<<8) + ((tmp3) << 16) + ((tmp4) << 24);
 
-	printf("After: tmp1, tmp2, tmp3, tmp4: %02x, %02x, %02x, %02x\n", tmp1, tmp2, tmp3, tmp4);
-
-	printf("fileSize: %d\n", *fileSize);
+	//printf("After: tmp1, tmp2, tmp3, tmp4: %02x, %02x, %02x, %02x\n", tmp1, tmp2, tmp3, tmp4);
+	//printf("fileSize: %d\n", *fileSize);
 
 	/*
 	free(tmp1);
@@ -218,7 +216,6 @@ int main()
 	FILE *fp;
 	unsigned char *fileFlag = (unsigned char *) emalloc(sizeof(unsigned char));
 	unsigned char *directoryFlag = (unsigned char *) emalloc(sizeof(unsigned char));
-	//long *fileSize = (long *) emalloc(sizeof(long));
 	unsigned int *fileSize = (unsigned int *) emalloc(sizeof(unsigned int));
 	char *fileName = (char *) emalloc(sizeof(char)*8*8);
 	char *fileExtension = (char *) emalloc(sizeof(char)*3*8);
