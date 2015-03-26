@@ -151,7 +151,6 @@ int nextSector(FILE *fp, int *fat_sector)
 	}
 	else
 	{
-		//return result;
 		return 0;
 	}	
 }
@@ -160,12 +159,9 @@ int nextSector(FILE *fp, int *fat_sector)
 void writeFile(FILE *fp, char *diskname, char *filename, int *first_sector)
 {
 	FILE *fp2 = NULL;
-
 	char buffer[512];
 
 	char *tmp1 = malloc(sizeof(char));
-
-	//int base = 16896;
 	int fat_sector = *first_sector;
 	
 	int j = 0;
@@ -180,13 +176,14 @@ void writeFile(FILE *fp, char *diskname, char *filename, int *first_sector)
 			physical_sector = 33 + fat_sector - 2; 
 			cur = physical_sector * BYTES_PER_SECTOR;
 			fseek(fp,cur,SEEK_SET);
+			
 			for (j = 0; j < 512; j++){
 				fread(tmp1,1,1,fp);
 				buffer[j] = *tmp1;
 			}
+			
 			fseek(fp,cur,SEEK_SET);
 			fwrite(buffer, 1, 512, fp2);
-			//cur += 512;
 
 			counter++;
 			//fat_sector++;
