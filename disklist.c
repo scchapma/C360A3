@@ -207,13 +207,13 @@ void parseDirectory(FILE *fp, int *fileFlag, int *directoryFlag, long *fileSize,
 int main()
 {
 	FILE *fp;
-	int *fileFlag = malloc(sizeof(int));
-	int *directoryFlag = malloc(sizeof(int));
-	long *fileSize = malloc(sizeof(long));
-	char *fileName = malloc(sizeof(char)*8*8);
-	char *fileExtension = malloc(sizeof(char)*3*8);
-	int *fileDate = malloc(sizeof(int));
-	int *fileTime = malloc(sizeof(int));
+	int *fileFlag = (int *) emalloc(sizeof(int));
+	int *directoryFlag = (int *) emalloc(sizeof(int));
+	long *fileSize = (long *) emalloc(sizeof(long));
+	char *fileName = (char *) emalloc(sizeof(char)*8*8);
+	char *fileExtension = (char *) emalloc(sizeof(char)*3*8);
+	int *fileDate = (int *) emalloc(sizeof(int));
+	int *fileTime = (int *) emalloc(sizeof(int));
 	
 	if ((fp=fopen("disk2.IMA","r")))
 	{
