@@ -5,13 +5,16 @@
 
 void getOSName(FILE *fp, char *osname)
 {
+	printf("Enter getOSName\n");
 	fseek(fp,3L,SEEK_SET);
 	fread(osname,1,8,fp);
+	//printf("Exit getOSName\n");
 
 }
 
 void getSize(FILE *fp, int *fileSize)
 {
+	printf("Enter getSize\n");
 	int *tmp1 = malloc(sizeof(int));
 	int *tmp2 = malloc(sizeof(int));
 	
@@ -26,12 +29,15 @@ void getSize(FILE *fp, int *fileSize)
 
 void getLabel(FILE *fp, char *label)
 {
+	printf("Enter getLabel\n");
 	fseek(fp,43L,SEEK_SET);
 	fread(label,11,8,fp);
+	//printf("Exit getLabel\n");
 }
 
 int getFreeSpace(FILE* fp, int *fileSize)
 {
+	printf("Enter getFreeSpace\n");
 	int n = 2;  // logical number of the first sector in Data Area
 	int base = 512; // the first byte of the FAT table 
 
@@ -95,6 +101,8 @@ int getFreeSpace(FILE* fp, int *fileSize)
 //int countRootDirFiles(FILE* fp)
 void getNumberFiles(FILE *fp, int* number_files, char* fileName)
 {
+	printf("Enter getNumberFiles\n");
+
 	int base = 9728;  // the first byte of the root directory
 	int cur = base;   // point to the first byte of the current entry
 	int offset = 32;  // Each entry has 32 bytes in root directory
@@ -102,7 +110,8 @@ void getNumberFiles(FILE *fp, int* number_files, char* fileName)
 
 	*number_files = 0;
 
-	int *tmp1 = malloc(sizeof(int));
+	//int *tmp1 = malloc(sizeof(int));
+	unsigned char *tmp1 = malloc(sizeof(unsigned char));
 	char *tmp2 = malloc(sizeof(char));
 
 	fseek(fp, base, SEEK_SET);	
@@ -112,10 +121,12 @@ void getNumberFiles(FILE *fp, int* number_files, char* fileName)
 	/* Why 0x00 here? 0x00 means this entry and all remaining entries are free */
 	while(*tmp1 != 0x00)  
 	{
+		printf("Enter while loop\n");
 		// Search for files
 		// 0xE5 indicates that the directory entry is free (i.e., currently unused) 
 		if (*tmp1 != 0xE5)
 		{
+			printf("Enter first if loop\n");
 			/* Locate the byte for the current entry's attribute */
 			fseek(fp, cur + attribute_offset, SEEK_SET);
 			fread(tmp2,1,1,fp);
@@ -126,11 +137,13 @@ void getNumberFiles(FILE *fp, int* number_files, char* fileName)
 			/* mask for subdirectory is 0x10, mask for label is 0x08 */			
 			if((*tmp2 != 0x0F) && !(*tmp2 & 0x10) && !(*tmp2 & 0x08))
 			{
+				printf("Enter if loop #2\n");
 				(*number_files)++;
 			}	
 			/* If item is label, set fileName to label */
 			if((*tmp2 != 0x0F) && (*tmp2 & 0x08))
 			{
+				printf("Enter if loop #2\n");
 				fseek(fp, cur, SEEK_SET);	
 				fread(fileName, 1, 8, fp);
 			}
@@ -140,20 +153,25 @@ void getNumberFiles(FILE *fp, int* number_files, char* fileName)
 		cur = cur + offset;
 		fseek(fp, cur, SEEK_SET);
 		fread(tmp1,1,1,fp);
+		printf("tmp1: %s\n", tmp1);
+		printf("Exit while loop #2\n");
 	}
 
 	free(tmp1);
 	free(tmp2);
+	printf("Exit getNumberFiles\n");
 }
 
 void getNumberFATCopies(FILE *fp, int* number_FAT_copies)
 {
+	printf("Enter getNumberFATCopies\n");
 	fseek(fp,16L,SEEK_SET);
 	fread(number_FAT_copies,1,1,fp);
 }
 
 void getSectorsPerFAT(FILE *fp, int* sectors_per_FAT)
 {
+	printf("Enter getSectorsPerFAT\n");
 	int *tmp1 = malloc(sizeof(int));
 	int *tmp2 = malloc(sizeof(int));
 	
@@ -179,7 +197,7 @@ int main()
 	
 	if ((fp=fopen("disk2.IMA","r")))
 	{
-		//printf("Successfully open the image file.\n");
+		printf("Successfully open the image file.\n");
 		
 		getOSName(fp,osname);
 		getLabel(fp,label);
