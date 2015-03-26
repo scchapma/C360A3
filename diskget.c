@@ -88,7 +88,7 @@ void findFile (FILE *fp, char *file_name, char *file_extension, int *first_secto
 	free(currentFileExtension);
 }
 
-void writeFile(FILE *fp, char *diskname, char *filename)
+void writeFile(FILE *fp, char *diskname, char *filename, int *first_sector)
 {
 	FILE *fp2 = NULL;
 
@@ -96,15 +96,20 @@ void writeFile(FILE *fp, char *diskname, char *filename)
 
 	char *tmp1 = malloc(sizeof(char));
 
-	int base = 16896;
-	int i = 0;
+	//int base = 16896;
+	int base = (*first_sector)*BYTES_PER_SECTOR;
+	
+	//int i = 0;
 	int j = 0;
+
+	int counter = 0;
 	
 	if ((fp2 = fopen(filename, "w")))
 	{	
 		int cur = base;
 
-		for (i = 0; i<98; i++){
+		do
+		{
 			fseek(fp,cur,SEEK_SET);
 			for (j = 0; j < 512; j++){
 				fread(tmp1,1,1,fp);
@@ -113,7 +118,14 @@ void writeFile(FILE *fp, char *diskname, char *filename)
 			fseek(fp,cur,SEEK_SET);
 			fwrite(buffer, 1, 512, fp2);
 			cur += 512;
-		}
+
+			counter++;
+
+			//next_sector = get_next_sector();
+
+		//}while(next_sector);
+		}while(counter < 98);
+		
 		fclose(fp2);
 	}
 	else
@@ -122,11 +134,6 @@ void writeFile(FILE *fp, char *diskname, char *filename)
 	}
 
 	free(tmp1);
-}
-
-void getFirstSector()
-{
-	;
 }
 
 int main(int argc, char *argv[])
@@ -150,7 +157,7 @@ int main(int argc, char *argv[])
 		printf("file_name: %s\n", file_name);
 		printf("file_extension: %s\n", file_extension);
 		findFile (fp, file_name, file_extension, first_sector);
-		writeFile(fp, argv[1], argv[2]);
+		writeFile(fp, argv[1], argv[2], first_sector);
 	}
 	else
 	{
