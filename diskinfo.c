@@ -163,14 +163,12 @@ void getNumberFiles(FILE *fp, unsigned int* number_files, unsigned char* fileNam
 
 void getNumberFATCopies(FILE *fp, unsigned int* number_FAT_copies)
 {
-	//printf("Enter getNumberFATCopies\n");
 	fseek(fp,16L,SEEK_SET);
 	fread(number_FAT_copies,1,1,fp);
 }
 
 void getSectorsPerFAT(FILE *fp, unsigned int* sectors_per_FAT)
 {
-	//printf("Enter getSectorsPerFAT\n");
 	unsigned char *tmp1 = (unsigned char*) malloc(sizeof(unsigned char));
 	unsigned char *tmp2 = (unsigned char*) malloc(sizeof(unsigned char));
 	
