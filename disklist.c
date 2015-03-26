@@ -16,7 +16,7 @@ void *emalloc(size_t n){
     return p;
 }
 
-void testAttributes(FILE *fp, int cur, int *fileFlag, int *directoryFlag, char *fileName, char *fileExtension)
+void testAttributes(FILE *fp, int cur, unsigned char *fileFlag, unsigned char *directoryFlag, char *fileName, char *fileExtension)
 {
 	//reset flags to off
 	*fileFlag = 0;
@@ -120,7 +120,7 @@ void getFileCreationTime(FILE *fp, int cur, int *fileTime, int *hour, int *minut
 	*second = (*fileTime & 0x001F);
 }
 
-void printReport(struct tm str_time, char *buffer, int *directoryFlag, int *fileFlag, long *fileSize, char *fileName, char *fileExtension)
+void printReport(struct tm str_time, char *buffer, unsigned char *directoryFlag, unsigned char *fileFlag, long *fileSize, char *fileName, char *fileExtension)
 {
 	if(*directoryFlag || *fileFlag){
 		if (*directoryFlag) printf("D ");
@@ -140,7 +140,7 @@ void printReport(struct tm str_time, char *buffer, int *directoryFlag, int *file
 
 // loop through the root directory
 // Each entry has 32 bytes in root directory
-void parseDirectory(FILE *fp, int *fileFlag, int *directoryFlag, long *fileSize, char *fileName, char *fileExtension, int *fileDate, int *fileTime)
+void parseDirectory(FILE *fp, unsigned char *fileFlag, unsigned char *directoryFlag, long *fileSize, char *fileName, char *fileExtension, int *fileDate, int *fileTime)
 {
 	int base = 9728;  // the first byte of the root directory
 
@@ -207,8 +207,8 @@ void parseDirectory(FILE *fp, int *fileFlag, int *directoryFlag, long *fileSize,
 int main()
 {
 	FILE *fp;
-	int *fileFlag = (int *) emalloc(sizeof(int));
-	int *directoryFlag = (int *) emalloc(sizeof(int));
+	unsigned char *fileFlag = (unsigned char *) emalloc(sizeof(unsigned char));
+	unsigned char *directoryFlag = (unsigned char *) emalloc(sizeof(unsigned char));
 	long *fileSize = (long *) emalloc(sizeof(long));
 	char *fileName = (char *) emalloc(sizeof(char)*8*8);
 	char *fileExtension = (char *) emalloc(sizeof(char)*3*8);
