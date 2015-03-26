@@ -67,7 +67,7 @@ void findFile (FILE *fp, char *file_name, char *file_extension, int *first_secto
 				fread(&tmp2, 1, 1, fp);  // get all 8 bits 
 				fread(&tmp3,1 ,1, fp); 				
 				*first_sector = (tmp3 << 8) + tmp2; 
-				*first_sector += 31;
+				//*first_sector += 31;
 				printf("First sector: %d\n", *first_sector);
 				break;
 			}
@@ -88,6 +88,42 @@ void findFile (FILE *fp, char *file_name, char *file_extension, int *first_secto
 	free(currentFileExtension);
 }
 
+/*
+void getNextSector()
+{
+// if the logical sector number is even
+	int tmp1 = 0;
+	int tmp2 = 0;
+
+	int counter = 0;
+	int result = 0;
+
+
+		if (n % 2 == 0)
+		{
+			fseek(fp, base + 3*n/2, SEEK_SET);
+			fread(&tmp1, 1, 1, fp);  // get all 8 bits 
+			fread(&tmp2,1 ,1, fp);
+			tmp2 = tmp2 & 0x0F;   // use mask to get the low 4 bits 
+
+			// Then apply "Little Endian": (4 bits)**** + (8 bits)********
+			result = (tmp2 << 8) + tmp1;  
+		}
+
+		// if the logical sector number is odd
+		else
+		{
+			fseek(fp, base + 3*n/2, SEEK_SET);
+			fread(&tmp1, 1, 1, fp);  // get all 8 bits 
+			fread(&tmp2,1 ,1, fp);
+			tmp1 = tmp1 & 0xF0;   // use mask to get the low 4 bits 
+
+			// Then apply "Little Endian": (4 bits)**** + (8 bits)********
+			result = (tmp2 << 4) + (tmp1 >> 4); 
+		}	
+}
+*/
+
 void writeFile(FILE *fp, char *diskname, char *filename, int *first_sector)
 {
 	FILE *fp2 = NULL;
@@ -97,19 +133,19 @@ void writeFile(FILE *fp, char *diskname, char *filename, int *first_sector)
 	char *tmp1 = malloc(sizeof(char));
 
 	//int base = 16896;
-	int base = (*first_sector)*BYTES_PER_SECTOR;
+	int fat_sector = *first_sector;
 	
-	//int i = 0;
 	int j = 0;
-
+	int physical_sector = 0;
+	int cur = 0;		
 	int counter = 0;
 	
 	if ((fp2 = fopen(filename, "w")))
 	{	
-		int cur = base;
-
 		do
 		{
+			physical_sector = 33 + fat_sector - 2; 
+			cur = physical_sector * BYTES_PER_SECTOR;
 			fseek(fp,cur,SEEK_SET);
 			for (j = 0; j < 512; j++){
 				fread(tmp1,1,1,fp);
@@ -117,11 +153,11 @@ void writeFile(FILE *fp, char *diskname, char *filename, int *first_sector)
 			}
 			fseek(fp,cur,SEEK_SET);
 			fwrite(buffer, 1, 512, fp2);
-			cur += 512;
+			//cur += 512;
 
 			counter++;
-
-			//next_sector = get_next_sector();
+			fat_sector++;
+			//fat_sector = getNextSector(&fat_sector);
 
 		//}while(next_sector);
 		}while(counter < 98);
