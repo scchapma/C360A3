@@ -49,10 +49,10 @@ void getFileSize(FILE *fp, int cur, unsigned char *fileSize)
 {
 
 	unsigned int file_size_offset = 28;
-	unsigned int *tmp1 = (unsigned int *) emalloc(sizeof(unsigned int));
-	unsigned int *tmp2 = (unsigned int *) emalloc(sizeof(unsigned int));
-	unsigned int *tmp3 = (unsigned int *) emalloc(sizeof(unsigned int));
-	unsigned int *tmp4 = (unsigned int *) emalloc(sizeof(unsigned int));
+	unsigned char *tmp1 = (unsigned char *) emalloc(sizeof(unsigned char));
+	unsigned char *tmp2 = (unsigned char *) emalloc(sizeof(unsigned char));
+	unsigned char *tmp3 = (unsigned char *) emalloc(sizeof(unsigned char));
+	unsigned char *tmp4 = (unsigned char *) emalloc(sizeof(unsigned char));
 
 	fseek(fp, cur + file_size_offset, SEEK_SET);
 	fread(tmp1,1,1,fp);
