@@ -6,44 +6,37 @@
 #define BYTES_PER_SECTOR 512
 #define SIZE 256
 
-void splitString (char *input, char *file_name, char *file_extension)
+void splitString (char **input, char **file_name, char **file_extension)
 {
+	/*
 	file_name = strsep(&input, ".");
 	file_extension = strsep(&input, " ");
-	printf("file name and extension: %s.%s\n", file_name, file_extension);
+	*/
 	
-	/*
-	char **ap, *argv[2], *inputstring;
+	char **ap, *argv[2];
 
-	for (ap = argv; (*ap = strsep(&inputstring, ".")) != NULL;)
+	for (ap = argv; (*ap = strsep(input, ".")) != NULL;)
        if (**ap != '\0')
            if (++ap >= &argv[2])
                break;
-	*/
+	
+	*file_name = argv[0];
+	*file_extension = argv[1];
+	printf("file name and extension: %s.%s\n", argv[0], argv[1]);
 }
 
-void findFile (char *file_name, char *file_extension)
-{
-	//set pointer to first item in root directory
-
-
-
-	//iterate through root directory, searching for match
-	//if match, write file to directory
-	//else, print message and return
-}
-
-void getNumberFiles(FILE *fp, int* number_files, char* fileName)
+void findFile (FILE *fp, char *file_name, char *file_extension)
 {
 	int base = 9728;  // the first byte of the root directory
 	int cur = base;   // point to the first byte of the current entry
 	int offset = 32;  // Each entry has 32 bytes in root directory
-	int attribute_offset = 11;
-
-	*number_files = 0;
+	int extension_offset = 8;
 
 	int *tmp1 = malloc(sizeof(int));
-	char *tmp2 = malloc(sizeof(char));
+	//char *tmp2 = malloc(sizeof(char));
+
+	char *currentFileName = malloc(sizeof(char)*8);
+	char *currentFileExtension = malloc(sizeof(char)*3);
 
 	fseek(fp, base, SEEK_SET);	
 	fread(tmp1,1,1,fp);
@@ -54,25 +47,24 @@ void getNumberFiles(FILE *fp, int* number_files, char* fileName)
 	{
 		// Search for files
 		// 0xE5 indicates that the directory entry is free (i.e., currently unused) 
+		// Assume that only files have names and extensions
 		if (*tmp1 != 0xE5)
 		{
-			/* Locate the byte for the current entry's attribute */
-			fseek(fp, cur + attribute_offset, SEEK_SET);
-			fread(tmp2,1,1,fp);
-			//printf("Attribute: %d\n", tmp2);
+			fseek(fp, cur, SEEK_SET);
+			fread(currentFileName,1,8,fp);
+			currentFileName = strtok(currentFileName, " ");
 			
-			/* What is the attribute of the entry ? */
-			/* if not 0x0F(not part of a long file name), not suddirectory, not volume label, then it is a file. */
-			/* mask for subdirectory is 0x10, mask for label is 0x08 */			
-			if((*tmp2 != 0x0F) && !(*tmp2 & 0x10) && !(*tmp2 & 0x08))
+			fseek(fp, cur + extension_offset, SEEK_SET);
+			fread(currentFileExtension,1,3,fp);
+			
+			//compare current file with target file
+			if (!strcmp(file_name, currentFileName) && !strcmp(file_extension, currentFileExtension))
 			{
-				(*number_files)++;
-			}	
-			/* If item is label, set fileName to label */
-			if((*tmp2 != 0x0F) && (*tmp2 & 0x08))
+				break;
+			}
+			else
 			{
-				fseek(fp, cur, SEEK_SET);	
-				fread(fileName, 1, 8, fp);
+				printf("Strings not equal: %s, %s, %s, %s\n", file_name, currentFileName, file_extension, currentFileExtension);
 			}
 		}
 		
@@ -83,27 +75,30 @@ void getNumberFiles(FILE *fp, int* number_files, char* fileName)
 	}
 
 	free(tmp1);
-	free(tmp2);
+	free(currentFileName);
+	free(currentFileExtension);
 }
 
-void parseInput(char *input)
+void parseInput(FILE *fp, char *input)
 {
 	//printf("Input string: %s\n", input);
 	//split input into file name and file extension
 	char *file_name = malloc(sizeof(char)*8);
 	char *file_extension = malloc(sizeof(char)*3);
-	splitString (input, file_name, file_extension);
+	splitString (&input, &file_name, &file_extension);
+	printf("file_name: %s\n", file_name);
+	printf("file_extension: %s\n", file_extension);
 	
 	//traverse root directory looking for match
-	findFile (file_name, file_extension);
+	findFile (fp, file_name, file_extension);
 	
-	free (file_name);
-	free (file_extension);
+	//TODO: What is problem with these mallocs?
+	//free (file_name);
+	//free (file_extension);
 }
 
 void writeFile(FILE *fp, char *diskname, char *filename)
 {
-	//FILE *fp = NULL;
 	FILE *fp2 = NULL;
 
 	char buffer[512];
@@ -114,9 +109,6 @@ void writeFile(FILE *fp, char *diskname, char *filename)
 	int i = 0;
 	int j = 0;
 	
-	//if ((fp=fopen("disk2.IMA","r")))
-	//if ((fp=fopen(diskname,"r")))
-	//{
 	if ((fp2 = fopen(filename, "w")))
 	{	
 		int cur = base;
@@ -157,10 +149,7 @@ int main(int argc, char *argv[])
 
 	if ((fp=fopen(argv[1],"r")))
 	{
-		parseInput(argv[2]);
-		//traverse root directory for file name
-		//if no file name, print "File Not Found" and return
-		//else, write file to Linux directory
+		parseInput(fp, argv[2]);
 		getFirstSector();
 		writeFile(fp, argv[1], argv[2]);
 	}
