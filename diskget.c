@@ -56,7 +56,6 @@ void findFile (FILE *fp, char *file_name, char *file_extension, unsigned int *fi
 	unsigned int extension_offset = 8;
 	unsigned int cluster_offset = 26;
 
-	//int *tmp1 = malloc(sizeof(int));
 	unsigned char tmp1; 
 	unsigned char tmp2;
 	unsigned char tmp3;
@@ -101,7 +100,6 @@ void findFile (FILE *fp, char *file_name, char *file_extension, unsigned int *fi
 		fread(&tmp1,1,1,fp);
 	}
 
-	//free(tmp1);
 	free(currentFileName);
 	free(currentFileExtension);
 }
