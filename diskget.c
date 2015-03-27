@@ -118,8 +118,11 @@ int nextSector(FILE *fp, unsigned int *fat_sector)
 	unsigned int n = *fat_sector;  // logical number of the first sector in Data Area
 	unsigned int base = 512; // the first byte of the FAT table 
 
-	int tmp1 = 0;
-	int tmp2 = 0;
+	//int tmp1 = 0;
+	//int tmp2 = 0;
+
+	unsigned char tmp1;
+	unsigned char tmp2;
 
 	unsigned int result = 0;
 
@@ -128,7 +131,7 @@ int nextSector(FILE *fp, unsigned int *fat_sector)
 	{
 		fseek(fp, base + 3*n/2, SEEK_SET);
 		fread(&tmp1, 1, 1, fp);  // get all 8 bits 
-		fread(&tmp2,1 ,1, fp);
+		fread(&tmp2, 1 ,1, fp);
 		tmp2 = tmp2 & 0x0F;   // use mask to get the low 4 bits 
 
 		// Then apply "Little Endian": (4 bits)**** + (8 bits)********
@@ -140,7 +143,7 @@ int nextSector(FILE *fp, unsigned int *fat_sector)
 	{
 		fseek(fp, base + 3*n/2, SEEK_SET);
 		fread(&tmp1, 1, 1, fp);  // get all 8 bits 
-		fread(&tmp2,1 ,1, fp);
+		fread(&tmp2, 1 ,1, fp);
 		tmp1 = tmp1 & 0xF0;   // use mask to get the low 4 bits 
 
 		// Then apply "Little Endian": (4 bits)**** + (8 bits)********
