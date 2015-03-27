@@ -173,8 +173,8 @@ int nextSector(FILE *fp, unsigned int *fat_sector)
 
 void writeFile(FILE *fp, char *diskname, char *filename, unsigned int *first_sector)
 {
-	//printf("Enter writeFile.\n");
-	//printf("first sector: %d\n", *first_sector);
+	printf("Enter writeFile.\n");
+	printf("first sector: %d\n", *first_sector);
 	FILE *fp2 = NULL;
 	char buffer[512];
 
