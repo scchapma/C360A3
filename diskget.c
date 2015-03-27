@@ -20,17 +20,18 @@ void splitString (char **input, char **file_name, char **file_extension)
 {
 	char *inputString[2];
 
-	printf("input: %s\n", *input);
+	//printf("input: %s\n", *input);
 
 	inputString[0] = strtok(*input, ".");
 	inputString[1] = strtok(NULL, " ");
 
-	printf("file, extension: %s, %s\n", inputString[0], inputString[1]); 
-	printf("input: %s\n", *input);
+	//printf("file, extension: %s, %s\n", inputString[0], inputString[1]); 
+	//printf("input: %s\n", *input);
 
 	*file_name = inputString[0];
 	*file_extension = inputString[1];
 
+	/*
 	char buffer [15];
 	strcpy(buffer, inputString[0]);
 	strcat(buffer, ".");
@@ -39,6 +40,9 @@ void splitString (char **input, char **file_name, char **file_extension)
 
 	*input = buffer;
 	printf("input: %s\n", *input);
+	*/
+
+
 
 	/*
 	char inputFileName[15];
@@ -187,8 +191,6 @@ void writeFile(FILE *fp, char *diskname, char *filename, unsigned int *first_sec
 	unsigned int j;
 	unsigned int physical_sector;
 	unsigned int cur;		
-	
-	printf("filename: %s\n", filename);
 
 	if ((fp2 = fopen(filename, "w")))
 	{	
