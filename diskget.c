@@ -29,35 +29,35 @@ void splitString (char **input, char **file_name, char **file_extension)
 	*file_extension = inputString[1];
 
 	/*
-	printf("Enter splitString.\n");
-	char **ap, *argv[2];
+	char inputFileName[15];
+	strncpy(inputFileName, *input, 12);
 
-	for (ap = argv; (*ap = strsep(input, ".")) != NULL;)
-       if (**ap != '\0')
-           if (++ap >= &argv[2])
-               break;
-	
-	*file_name = argv[0];
-	*file_extension = argv[1];
-	//TODO:  
-	//Don't get rid of this print statement!
-	//Related to problems with adding extensions to file?
-	printf("file name and extension: %s.%s\n", argv[0], argv[1]);
+
+	char *inputString[2];
+
+	inputString[0] = strtok(inputFileName, ".");
+	inputString[1] = strtok(NULL, " ");
+
+	printf("file, extension: %s, %s\n", inputString[0], inputString[1]); 
+
+	*file_name = inputString[0];
+	*file_extension = inputString[1];
 	*/
+
 }
 
 
 void findFile (FILE *fp, char *file_name, char *file_extension, unsigned int *first_sector)
 {
 	printf("Enter findFile.\n");
-	int base = 9728;  // the first byte of the root directory
-	int cur = base;   // point to the first byte of the current entry
-	int offset = 32;  // Each entry has 32 bytes in root directory
-	int extension_offset = 8;
-	int cluster_offset = 26;
+	unsigned int base = 9728;  // the first byte of the root directory
+	unsigned int cur = base;   // point to the first byte of the current entry
+	unsigned int offset = 32;  // Each entry has 32 bytes in root directory
+	unsigned int extension_offset = 8;
+	unsigned int cluster_offset = 26;
 
-	int *tmp1 = malloc(sizeof(int));
-	//unsigned int tmp2, tmp3;
+	//int *tmp1 = malloc(sizeof(int));
+	unsigned int tmp1; 
 	unsigned char tmp2;
 	unsigned char tmp3;
 
@@ -65,16 +65,16 @@ void findFile (FILE *fp, char *file_name, char *file_extension, unsigned int *fi
 	char *currentFileExtension = malloc(sizeof(char)*3);
 
 	fseek(fp, base, SEEK_SET);	
-	fread(tmp1,1,1,fp);
+	fread(&tmp1,1,1,fp);
 
 	/* Read "notes on directory entries" for the correct conditions of how we identify a file */
 	/* Why 0x00 here? 0x00 means this entry and all remaining entries are free */
-	while(*tmp1 != 0x00)  
+	while(tmp1 != 0x00)  
 	{
 		// Search for files
 		// 0xE5 indicates that the directory entry is free (i.e., currently unused) 
 		// Assume that only files have names and extensions
-		if (*tmp1 != 0xE5)
+		if (tmp1 != 0xE5)
 		{
 			fseek(fp, cur, SEEK_SET);
 			fread(currentFileName,1,8,fp);
@@ -102,10 +102,10 @@ void findFile (FILE *fp, char *file_name, char *file_extension, unsigned int *fi
 		// Go to next entry in Root Directory
 		cur = cur + offset;
 		fseek(fp, cur, SEEK_SET);
-		fread(tmp1,1,1,fp);
+		fread(&tmp1,1,1,fp);
 	}
 
-	free(tmp1);
+	//free(tmp1);
 	free(currentFileName);
 	free(currentFileExtension);
 }
