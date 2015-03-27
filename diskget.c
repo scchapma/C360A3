@@ -20,13 +20,25 @@ void splitString (char **input, char **file_name, char **file_extension)
 {
 	char *inputString[2];
 
+	printf("input: %s\n", *input);
+
 	inputString[0] = strtok(*input, ".");
 	inputString[1] = strtok(NULL, " ");
 
-	//printf("file, extension: %s, %s\n", inputString[0], inputString[1]); 
+	printf("file, extension: %s, %s\n", inputString[0], inputString[1]); 
+	printf("input: %s\n", *input);
 
 	*file_name = inputString[0];
 	*file_extension = inputString[1];
+
+	char buffer [15];
+	strcpy(buffer, inputString[0]);
+	strcat(buffer, ".");
+	strcat(buffer, inputString[1]);
+	printf("buffer: %s\n", buffer);
+
+	*input = buffer;
+	printf("input: %s\n", *input);
 
 	/*
 	char inputFileName[15];
@@ -176,6 +188,8 @@ void writeFile(FILE *fp, char *diskname, char *filename, unsigned int *first_sec
 	unsigned int physical_sector;
 	unsigned int cur;		
 	
+	printf("filename: %s\n", filename);
+
 	if ((fp2 = fopen(filename, "w")))
 	{	
 		do
@@ -220,8 +234,16 @@ int main(int argc, char *argv[])
 	if ((fp=fopen(argv[1],"r")))
 	{
 		splitString (&input, &file_name, &file_extension);
+		printf("file name: %s\n", file_name);
+		printf("file extension: %s\n", file_extension);
+		char buffer [15];
+		strcpy(buffer, file_name);
+		strcat(buffer, ".");
+		strcat(buffer, file_extension);
+		printf("buffer: %s\n", buffer);
 		findFile (fp, file_name, file_extension, first_sector);
-		writeFile(fp, argv[1], argv[2], first_sector);
+		//writeFile(fp, argv[1], argv[2], first_sector);
+		writeFile(fp, argv[1], buffer, first_sector);
 	}
 	else
 	{
