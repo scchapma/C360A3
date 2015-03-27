@@ -173,14 +173,13 @@ int nextSector(FILE *fp, unsigned int *fat_sector)
 
 void writeFile(FILE *fp, char *diskname, char *filename, unsigned int *first_sector)
 {
-	printf("Enter writeFile.\n");
-	printf("first sector: %d\n", *first_sector);
+	//printf("Enter writeFile.\n");
+	//printf("first sector: %d\n", *first_sector);
 	FILE *fp2 = NULL;
 	char buffer[512];
 
 	unsigned int fat_sector = *first_sector;
 	
-	//char *tmp1 = malloc(sizeof(char));
 	unsigned char tmp1;
 	unsigned int j;
 	unsigned int physical_sector;
@@ -212,8 +211,6 @@ void writeFile(FILE *fp, char *diskname, char *filename, unsigned int *first_sec
 	{
 		printf("Fail to open the target file.\n");
 	}
-
-	//free(tmp1);
 }
 
 int main(int argc, char *argv[])
