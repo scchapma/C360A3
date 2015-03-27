@@ -49,7 +49,7 @@ void splitString (char **input, char **file_name, char **file_extension)
 
 void findFile (FILE *fp, char *file_name, char *file_extension, unsigned int *first_sector)
 {
-	printf("Enter findFile.\n");
+	//printf("Enter findFile.\n");
 	unsigned int base = 9728;  // the first byte of the root directory
 	unsigned int cur = base;   // point to the first byte of the current entry
 	unsigned int offset = 32;  // Each entry has 32 bytes in root directory
@@ -168,8 +168,6 @@ int nextSector(FILE *fp, unsigned int *fat_sector)
 
 void writeFile(FILE *fp, char *diskname, char *filename, unsigned int *first_sector)
 {
-	//printf("Enter writeFile.\n");
-	//printf("first sector: %d\n", *first_sector);
 	FILE *fp2 = NULL;
 	char buffer[512];
 
