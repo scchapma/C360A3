@@ -23,7 +23,7 @@ void splitString (char **input, char **file_name, char **file_extension)
 	inputString[0] = strtok(*input, ".");
 	inputString[1] = strtok(NULL, " ");
 
-	printf("file, extension: %s, %s\n", inputString[0], inputString[1]); 
+	//printf("file, extension: %s, %s\n", inputString[0], inputString[1]); 
 
 	*file_name = inputString[0];
 	*file_extension = inputString[1];
@@ -49,7 +49,6 @@ void splitString (char **input, char **file_name, char **file_extension)
 
 void findFile (FILE *fp, char *file_name, char *file_extension, unsigned int *first_sector)
 {
-	//printf("Enter findFile.\n");
 	unsigned int base = 9728;  // the first byte of the root directory
 	unsigned int cur = base;   // point to the first byte of the current entry
 	unsigned int offset = 32;  // Each entry has 32 bytes in root directory
@@ -138,7 +137,6 @@ int nextSector(FILE *fp, unsigned int *fat_sector)
 	}
 
 	*fat_sector = result;
-	//printf("result: %d\n", result);
 	
 	if (result >= 0xFF0 && result <= 0xFF6)
 	{
