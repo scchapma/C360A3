@@ -138,7 +138,7 @@ int nextSector(FILE *fp, unsigned int *fat_sector)
 	}
 
 	*fat_sector = result;
-	printf("result: %d\n", result);
+	//printf("result: %d\n", result);
 	
 	if (result >= 0xFF0 && result <= 0xFF6)
 	{
