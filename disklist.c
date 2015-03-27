@@ -62,7 +62,7 @@ void getFileSize(FILE *fp, int cur, unsigned int *fileSize)
 	*fileSize = tmp1+((tmp2)<<8) + ((tmp3) << 16) + ((tmp4) << 24);
 }
 
-void getFileCreationDate(FILE *fp, int cur, unsigned int *fileDate, unsigned int *year, unsigned int *month, unsigned int *day)
+void getFileCreationDate(FILE *fp, int cur, unsigned int *fileDate, unsigned char *year, unsigned char *month, unsigned char *day)
 {
 	unsigned int file_date_offset = 16;
 	
@@ -84,7 +84,7 @@ void getFileCreationDate(FILE *fp, int cur, unsigned int *fileDate, unsigned int
 	*day = (*fileDate & 0x001F);
 }
 
-void getFileCreationTime(FILE *fp, int cur, unsigned int *fileTime, unsigned int *hour, unsigned int *minute, unsigned int *second)
+void getFileCreationTime(FILE *fp, int cur, unsigned int *fileTime, unsigned char *hour, unsigned char *minute, unsigned char *second)
 {
 	int file_time_offset = 14;
 	
@@ -144,16 +144,14 @@ void parseDirectory(FILE *fp, unsigned char *fileFlag, unsigned char *directoryF
 	fseek(fp, base, SEEK_SET);
 	fread(tmp1,1,1,fp);
 	
-	//TODO: Make these
-	//create additional pointers for time and date
-	
-	unsigned int *year = (unsigned int *) emalloc(sizeof(unsigned int));
-	unsigned int *month = (unsigned int *) emalloc(sizeof(unsigned int));
-	unsigned int *day = (unsigned int *) emalloc(sizeof(unsigned int));
+	//create additional pointers for time and date	
+	unsigned char *year = (unsigned char *) emalloc(sizeof(unsigned char));
+	unsigned char *month = (unsigned char *) emalloc(sizeof(unsigned char));
+	unsigned char *day = (unsigned char *) emalloc(sizeof(unsigned char));
 
-	unsigned int *hour = (unsigned int *) emalloc(sizeof(unsigned int));
-	unsigned int *minute = (unsigned int *) emalloc(sizeof(unsigned int));
-	unsigned int *second = (unsigned int *) emalloc(sizeof(unsigned int));
+	unsigned char *hour = (unsigned char *) emalloc(sizeof(unsigned char));
+	unsigned char *minute = (unsigned char *) emalloc(sizeof(unsigned char));
+	unsigned char *second = (unsigned char *) emalloc(sizeof(unsigned char));
 
 	//add time struct
 	struct tm str_time;
