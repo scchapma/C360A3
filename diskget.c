@@ -234,15 +234,11 @@ int main(int argc, char *argv[])
 	if ((fp=fopen(argv[1],"r")))
 	{
 		splitString (&input, &file_name, &file_extension);
-		printf("file name: %s\n", file_name);
-		printf("file extension: %s\n", file_extension);
 		char buffer [15];
 		strcpy(buffer, file_name);
 		strcat(buffer, ".");
 		strcat(buffer, file_extension);
-		printf("buffer: %s\n", buffer);
 		findFile (fp, file_name, file_extension, first_sector);
-		//writeFile(fp, argv[1], argv[2], first_sector);
 		writeFile(fp, argv[1], buffer, first_sector);
 	}
 	else
