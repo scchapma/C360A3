@@ -64,8 +64,7 @@ void getFileSize(FILE *fp, int cur, unsigned int *fileSize)
 
 void getFileCreationDate(FILE *fp, int cur, unsigned int *fileDate, unsigned char *year, unsigned char *month, unsigned char *day)
 {
-	unsigned int file_date_offset = 16;
-	
+	unsigned int file_date_offset = 16;	
 	unsigned char tmp1; 
 	unsigned char tmp2;
 
@@ -86,11 +85,7 @@ void getFileCreationDate(FILE *fp, int cur, unsigned int *fileDate, unsigned cha
 
 void getFileCreationTime(FILE *fp, int cur, unsigned int *fileTime, unsigned char *hour, unsigned char *minute, unsigned char *second)
 {
-	int file_time_offset = 14;
-	
-	//int *tmp1 = (int *) emalloc(sizeof(int));
-	//int *tmp2 = (int *) emalloc(sizeof(int));
-
+	unsigned int file_time_offset = 14;	
 	unsigned char tmp1;
 	unsigned char tmp2;
 
@@ -99,9 +94,6 @@ void getFileCreationTime(FILE *fp, int cur, unsigned int *fileTime, unsigned cha
 	fread(&tmp2,1,1,fp);
 
 	*fileTime = tmp1 + ((tmp2) << 8);
-
-	//free(tmp1);
-	//free(tmp2);
 
 	//break time down into hours, minutes and seconds
 	//hour is bits 15 to 11 - use mask 0xF800
