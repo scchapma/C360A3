@@ -6,6 +6,16 @@
 #define BYTES_PER_SECTOR 512
 #define SIZE 256
 
+void *emalloc(size_t n){
+    void *p;
+    p = malloc(n);
+    if (p == NULL) {
+        fprintf(stderr, "malloc of %lu bytes failed", n);
+        exit(1);
+    }
+    return p;
+}
+
 void splitString (char **input, char **file_name, char **file_extension)
 {
 	char *inputString[2];
@@ -36,7 +46,8 @@ void splitString (char **input, char **file_name, char **file_extension)
 	*/
 }
 
-void findFile (FILE *fp, char *file_name, char *file_extension, int *first_sector)
+
+void findFile (FILE *fp, char *file_name, char *file_extension, unsigned int *first_sector)
 {
 	printf("Enter findFile.\n");
 	int base = 9728;  // the first byte of the root directory
@@ -46,7 +57,9 @@ void findFile (FILE *fp, char *file_name, char *file_extension, int *first_secto
 	int cluster_offset = 26;
 
 	int *tmp1 = malloc(sizeof(int));
-	int tmp2, tmp3;
+	//unsigned int tmp2, tmp3;
+	unsigned char tmp2;
+	unsigned char tmp3;
 
 	char *currentFileName = malloc(sizeof(char)*8);
 	char *currentFileExtension = malloc(sizeof(char)*3);
@@ -76,8 +89,12 @@ void findFile (FILE *fp, char *file_name, char *file_extension, int *first_secto
 				//get address of first sector
 				fseek(fp, cur + cluster_offset, SEEK_SET);
 				fread(&tmp2, 1, 1, fp);  // get all 8 bits 
-				fread(&tmp3,1 ,1, fp); 				
+				fread(&tmp3,1 ,1, fp); 
+				printf("tmp2: %02x\n", tmp2);
+				printf("tmp3: %02x\n", tmp3);					
 				*first_sector = (tmp3 << 8) + tmp2; 
+				printf("first sector initialized: %d\n", *first_sector);
+
 				break;
 			}
 		}
@@ -93,16 +110,18 @@ void findFile (FILE *fp, char *file_name, char *file_extension, int *first_secto
 	free(currentFileExtension);
 }
 
-int nextSector(FILE *fp, int *fat_sector)
+int nextSector(FILE *fp, unsigned int *fat_sector)
 {
 	printf("Enter nextSector.\n");
-	int n = *fat_sector;  // logical number of the first sector in Data Area
+	printf("Fat sector on entry: %d\n", *fat_sector);
+	
+	unsigned int n = *fat_sector;  // logical number of the first sector in Data Area
 	int base = 512; // the first byte of the FAT table 
 
 	int tmp1 = 0;
 	int tmp2 = 0;
 
-	int result = 0;
+	unsigned int result = 0;
 
 	// if the logical sector number is even
 	if (n % 2 == 0)
@@ -129,6 +148,7 @@ int nextSector(FILE *fp, int *fat_sector)
 	}
 
 	*fat_sector = result;
+	printf("Fat sector: %d\n", *fat_sector);
 	
 	if (result >= 0xFF0 && result <= 0xFF6)
 	{
@@ -156,14 +176,15 @@ int nextSector(FILE *fp, int *fat_sector)
 	}	
 }
 
-void writeFile(FILE *fp, char *diskname, char *filename, int *first_sector)
+void writeFile(FILE *fp, char *diskname, char *filename, unsigned int *first_sector)
 {
 	printf("Enter writeFile.\n");
+	printf("first sector: %d\n", *first_sector);
 	FILE *fp2 = NULL;
 	char buffer[512];
 
 	char *tmp1 = malloc(sizeof(char));
-	int fat_sector = *first_sector;
+	unsigned int fat_sector = *first_sector;
 	
 	int j = 0;
 	int physical_sector = 0;
@@ -185,6 +206,8 @@ void writeFile(FILE *fp, char *diskname, char *filename, int *first_sector)
 			fseek(fp,cur,SEEK_SET);
 			fwrite(buffer, 1, 512, fp2);
 
+			printf("fat_sector: %d\n", fat_sector);
+
 		}while (!nextSector(fp, &fat_sector));	
 		
 
@@ -204,7 +227,7 @@ int main(int argc, char *argv[])
 	char *file_name; 
 	char *file_extension; 
 	
-	int *first_sector = malloc(sizeof(char)*2);
+	unsigned int *first_sector = (unsigned int *) emalloc(sizeof(unsigned char)*2);
 
 	if ( argc != 3 ) {
 		fprintf(stderr, "usage: <diskname> <file name>\n");
