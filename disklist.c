@@ -127,14 +127,14 @@ void printReport(struct tm str_time, char *buffer, unsigned char *directoryFlag,
 void parseDirectory(FILE *fp, unsigned char *fileFlag, unsigned char *directoryFlag, unsigned int *fileSize, char *fileName, char *fileExtension, unsigned int *fileDate, unsigned int *fileTime)
 {
 	unsigned int base = 9728;  // the first byte of the root directory
+
 	unsigned int cur = base;   // point to the first byte of the current entry
 	unsigned int offset = 32;  // Each entry has 32 bytes in root directory
 
-	//int *tmp1 = (int *) emalloc(sizeof(int));
-	int tmp1; 
+	int *tmp1 = (int *) emalloc(sizeof(int));
 
 	fseek(fp, base, SEEK_SET);
-	fread(&tmp1,1,1,fp);
+	fread(tmp1,1,1,fp);
 	
 	//create additional pointers for time and date	
 	unsigned char *year = (unsigned char *) emalloc(sizeof(unsigned char));
@@ -150,11 +150,11 @@ void parseDirectory(FILE *fp, unsigned char *fileFlag, unsigned char *directoryF
 	char buffer[SIZE];
 
 	//traverse each item in root directory
-	while(tmp1 != 0x00)  
+	while(*tmp1 != 0x00)  
 	{
 		// Search for files
 		// 0xE5 indicates that the directory entry is free (i.e., currently unused) 
-		if (tmp1 != 0xE5)
+		if (*tmp1 != 0xE5)
 		{
 			//test for regular file or directory and set flag
 			//get file name
@@ -177,7 +177,7 @@ void parseDirectory(FILE *fp, unsigned char *fileFlag, unsigned char *directoryF
 		// Go to next entry in Root Directory
 		cur = cur + offset;
 		fseek(fp, cur, SEEK_SET);
-		fread(&tmp1,1,1,fp);
+		fread(tmp1,1,1,fp);
 	}
 	
 	free(year);
@@ -186,7 +186,7 @@ void parseDirectory(FILE *fp, unsigned char *fileFlag, unsigned char *directoryF
 	free(hour);
 	free(minute);
 	free(second);
-	//free(tmp1);
+	free(tmp1);
 }
 
 int main()
