@@ -112,18 +112,14 @@ void findFile (FILE *fp, char *file_name, char *file_extension, unsigned int *fi
 
 int nextSector(FILE *fp, unsigned int *fat_sector)
 {
-	printf("Enter nextSector.\n");
-	printf("Fat sector on entry: %d\n", *fat_sector);
+	//printf("Enter nextSector.\n");
+	//printf("Fat sector on entry: %d\n", *fat_sector);
 	
 	unsigned int n = *fat_sector;  // logical number of the first sector in Data Area
 	unsigned int base = 512; // the first byte of the FAT table 
 
-	//int tmp1 = 0;
-	//int tmp2 = 0;
-
 	unsigned char tmp1;
 	unsigned char tmp2;
-
 	unsigned int result = 0;
 
 	// if the logical sector number is even
@@ -151,7 +147,7 @@ int nextSector(FILE *fp, unsigned int *fat_sector)
 	}
 
 	*fat_sector = result;
-	printf("Fat sector: %d\n", *fat_sector);
+	//printf("Fat sector: %d\n", *fat_sector);
 	
 	if (result >= 0xFF0 && result <= 0xFF6)
 	{
