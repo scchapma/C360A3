@@ -8,6 +8,17 @@
 
 void splitString (char **input, char **file_name, char **file_extension)
 {
+	char *inputString[2];
+
+	inputString[0] = strtok(*input, ".");
+	inputString[1] = strtok(NULL, " ");
+
+	printf("file, extension: %s, %s\n", inputString[0], inputString[1]); 
+
+	*file_name = inputString[0];
+	*file_extension = inputString[1];
+
+	/*
 	printf("Enter splitString.\n");
 	char **ap, *argv[2];
 
@@ -22,6 +33,7 @@ void splitString (char **input, char **file_name, char **file_extension)
 	//Don't get rid of this print statement!
 	//Related to problems with adding extensions to file?
 	printf("file name and extension: %s.%s\n", argv[0], argv[1]);
+	*/
 }
 
 void findFile (FILE *fp, char *file_name, char *file_extension, int *first_sector)
