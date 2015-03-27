@@ -57,7 +57,7 @@ void findFile (FILE *fp, char *file_name, char *file_extension, unsigned int *fi
 	unsigned int cluster_offset = 26;
 
 	//int *tmp1 = malloc(sizeof(int));
-	unsigned int tmp1; 
+	unsigned char tmp1; 
 	unsigned char tmp2;
 	unsigned char tmp3;
 
