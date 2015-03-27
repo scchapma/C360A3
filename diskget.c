@@ -89,12 +89,8 @@ void findFile (FILE *fp, char *file_name, char *file_extension, unsigned int *fi
 				//get address of first sector
 				fseek(fp, cur + cluster_offset, SEEK_SET);
 				fread(&tmp2, 1, 1, fp);  // get all 8 bits 
-				fread(&tmp3, 1 ,1, fp); 
-				//printf("tmp2: %02x\n", tmp2);
-				//printf("tmp3: %02x\n", tmp3);					
+				fread(&tmp3, 1 ,1, fp); 				
 				*first_sector = (tmp3 << 8) + tmp2; 
-				//printf("first sector initialized: %d\n", *first_sector);
-
 				break;
 			}
 		}
