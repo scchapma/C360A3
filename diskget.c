@@ -57,7 +57,7 @@ void findFile (FILE *fp, char *file_name, char *file_extension, unsigned int *fi
 	unsigned int cluster_offset = 26;
 
 	//int *tmp1 = malloc(sizeof(int));
-	unsigned  tmp1; 
+	unsigned char tmp1; 
 	unsigned char tmp2;
 	unsigned char tmp3;
 
@@ -89,11 +89,11 @@ void findFile (FILE *fp, char *file_name, char *file_extension, unsigned int *fi
 				//get address of first sector
 				fseek(fp, cur + cluster_offset, SEEK_SET);
 				fread(&tmp2, 1, 1, fp);  // get all 8 bits 
-				fread(&tmp3,1 ,1, fp); 
-				printf("tmp2: %02x\n", tmp2);
-				printf("tmp3: %02x\n", tmp3);					
+				fread(&tmp3, 1 ,1, fp); 
+				//printf("tmp2: %02x\n", tmp2);
+				//printf("tmp3: %02x\n", tmp3);					
 				*first_sector = (tmp3 << 8) + tmp2; 
-				printf("first sector initialized: %d\n", *first_sector);
+				//printf("first sector initialized: %d\n", *first_sector);
 
 				break;
 			}
@@ -144,6 +144,7 @@ int nextSector(FILE *fp, unsigned int *fat_sector)
 	}
 
 	*fat_sector = result;
+	printf("result: %d\n", result);
 	
 	if (result >= 0xFF0 && result <= 0xFF6)
 	{
@@ -173,8 +174,8 @@ int nextSector(FILE *fp, unsigned int *fat_sector)
 
 void writeFile(FILE *fp, char *diskname, char *filename, unsigned int *first_sector)
 {
-	printf("Enter writeFile.\n");
-	printf("first sector: %d\n", *first_sector);
+	//printf("Enter writeFile.\n");
+	//printf("first sector: %d\n", *first_sector);
 	FILE *fp2 = NULL;
 	char buffer[512];
 
@@ -200,8 +201,6 @@ void writeFile(FILE *fp, char *diskname, char *filename, unsigned int *first_sec
 			
 			fseek(fp, cur, SEEK_SET);
 			fwrite(buffer, 1, 512, fp2);
-
-			printf("fat_sector: %d\n", fat_sector);
 
 		}while (!nextSector(fp, &fat_sector));	
 		
