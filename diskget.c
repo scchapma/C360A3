@@ -117,7 +117,6 @@ int nextSector(FILE *fp, unsigned int *fat_sector)
 
 	unsigned char tmp1;
 	unsigned char tmp2;
-	//unsigned int result = 0;
 	unsigned int result;
 
 	// if the logical sector number is even
@@ -182,9 +181,9 @@ void writeFile(FILE *fp, char *diskname, char *filename, unsigned int *first_sec
 	char *tmp1 = malloc(sizeof(char));
 	unsigned int fat_sector = *first_sector;
 	
-	int j = 0;
-	int physical_sector = 0;
-	int cur = 0;		
+	unsigned int j;
+	unsigned int physical_sector;
+	unsigned int cur;		
 	
 	if ((fp2 = fopen(filename, "w")))
 	{	
@@ -206,7 +205,6 @@ void writeFile(FILE *fp, char *diskname, char *filename, unsigned int *first_sec
 
 		}while (!nextSector(fp, &fat_sector));	
 		
-
 		fclose(fp2);
 	}
 	else
