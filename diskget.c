@@ -8,6 +8,7 @@
 
 void splitString (char **input, char **file_name, char **file_extension)
 {
+	printf("Enter splitString.\n");
 	char **ap, *argv[2];
 
 	for (ap = argv; (*ap = strsep(input, ".")) != NULL;)
@@ -25,6 +26,7 @@ void splitString (char **input, char **file_name, char **file_extension)
 
 void findFile (FILE *fp, char *file_name, char *file_extension, int *first_sector)
 {
+	printf("Enter findFile.\n");
 	int base = 9728;  // the first byte of the root directory
 	int cur = base;   // point to the first byte of the current entry
 	int offset = 32;  // Each entry has 32 bytes in root directory
@@ -81,6 +83,7 @@ void findFile (FILE *fp, char *file_name, char *file_extension, int *first_secto
 
 int nextSector(FILE *fp, int *fat_sector)
 {
+	printf("Enter nextSector.\n");
 	int n = *fat_sector;  // logical number of the first sector in Data Area
 	int base = 512; // the first byte of the FAT table 
 
@@ -143,6 +146,7 @@ int nextSector(FILE *fp, int *fat_sector)
 
 void writeFile(FILE *fp, char *diskname, char *filename, int *first_sector)
 {
+	printf("Enter writeFile.\n");
 	FILE *fp2 = NULL;
 	char buffer[512];
 
