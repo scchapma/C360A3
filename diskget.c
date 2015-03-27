@@ -57,7 +57,7 @@ void findFile (FILE *fp, char *file_name, char *file_extension, unsigned int *fi
 	unsigned int cluster_offset = 26;
 
 	//int *tmp1 = malloc(sizeof(int));
-	unsigned char tmp1; 
+	unsigned  tmp1; 
 	unsigned char tmp2;
 	unsigned char tmp3;
 
@@ -116,10 +116,10 @@ int nextSector(FILE *fp, unsigned int *fat_sector)
 	printf("Fat sector on entry: %d\n", *fat_sector);
 	
 	unsigned int n = *fat_sector;  // logical number of the first sector in Data Area
-	unsigned int base = 512; // the first byte of the FAT table 
+	int base = 512; // the first byte of the FAT table 
 
-	unsigned int tmp1;
-	unsigned int tmp2;
+	int tmp1 = 0;
+	int tmp2 = 0;
 
 	unsigned int result = 0;
 
