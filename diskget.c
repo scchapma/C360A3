@@ -116,7 +116,7 @@ int nextSector(FILE *fp, unsigned int *fat_sector)
 	printf("Fat sector on entry: %d\n", *fat_sector);
 	
 	unsigned int n = *fat_sector;  // logical number of the first sector in Data Area
-	int base = 512; // the first byte of the FAT table 
+	unsigned int base = 512; // the first byte of the FAT table 
 
 	int tmp1 = 0;
 	int tmp2 = 0;
