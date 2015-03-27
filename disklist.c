@@ -130,7 +130,6 @@ void parseDirectory(FILE *fp, unsigned char *fileFlag, unsigned char *directoryF
 	unsigned int cur = base;   // point to the first byte of the current entry
 	unsigned int offset = 32;  // Each entry has 32 bytes in root directory
 
-	//int *tmp1 = (int *) emalloc(sizeof(int));
 	unsigned char tmp1; 
 
 	fseek(fp, base, SEEK_SET);
@@ -186,7 +185,6 @@ void parseDirectory(FILE *fp, unsigned char *fileFlag, unsigned char *directoryF
 	free(hour);
 	free(minute);
 	free(second);
-	//free(tmp1);
 }
 
 int main()
