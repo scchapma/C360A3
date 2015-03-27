@@ -178,9 +178,10 @@ void writeFile(FILE *fp, char *diskname, char *filename, unsigned int *first_sec
 	FILE *fp2 = NULL;
 	char buffer[512];
 
-	char *tmp1 = malloc(sizeof(char));
 	unsigned int fat_sector = *first_sector;
 	
+	//char *tmp1 = malloc(sizeof(char));
+	unsigned char tmp1;
 	unsigned int j;
 	unsigned int physical_sector;
 	unsigned int cur;		
@@ -194,11 +195,11 @@ void writeFile(FILE *fp, char *diskname, char *filename, unsigned int *first_sec
 			fseek(fp,cur,SEEK_SET);
 			
 			for (j = 0; j < 512; j++){
-				fread(tmp1,1,1,fp);
-				buffer[j] = *tmp1;
+				fread(&tmp1, 1, 1, fp);
+				buffer[j] = tmp1;
 			}
 			
-			fseek(fp,cur,SEEK_SET);
+			fseek(fp, cur, SEEK_SET);
 			fwrite(buffer, 1, 512, fp2);
 
 			printf("fat_sector: %d\n", fat_sector);
@@ -212,7 +213,7 @@ void writeFile(FILE *fp, char *diskname, char *filename, unsigned int *first_sec
 		printf("Fail to open the target file.\n");
 	}
 
-	free(tmp1);
+	//free(tmp1);
 }
 
 int main(int argc, char *argv[])
