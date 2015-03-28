@@ -12,4 +12,8 @@ For Part 3, the diskget program will the argument for the requested file is
 case-sensitive.  The program will read "ANS1.PDF" or "REMINDER.TXT".
 However, the program will not read "ansi.pdf" or "Reminder.txt". 
 
+The program prints out messages to the user when writing data.  Assuming
+a valid file was requested and written properly, the user will receive
+a message stating "Last cluster in file - exiting."  Otherwise, the user
+will receive an error message.
 
